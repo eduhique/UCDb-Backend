@@ -4,11 +4,13 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Data
 @Entity
+@Table(name="users")
 public class User {
 
     private String primeiroNome;
