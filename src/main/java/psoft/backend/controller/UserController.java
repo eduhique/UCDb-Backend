@@ -19,6 +19,7 @@ public class UserController {
         this.userService = userService;
     }
 
+
     @PostMapping(value = "/")
     @ResponseBody
     public ResponseEntity<User> create(@RequestBody User user) throws UserExistsException {
