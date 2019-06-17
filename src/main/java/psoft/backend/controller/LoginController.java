@@ -46,8 +46,7 @@ public class LoginController {
                 .compact();
 
         return new LoginResponse(token);
-
-
+        
     }
 
     private class LoginResponse {

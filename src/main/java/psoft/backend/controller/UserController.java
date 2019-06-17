@@ -44,4 +44,14 @@ public class UserController {
         return new ResponseEntity<List<User>>( users, HttpStatus.OK);
     }
 
+    @DeleteMapping(value = "/deleteAll")
+    public ResponseEntity deleteAll(){
+        try {
+            userService.deleteAll();
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            throw new InternalError("Ocorreu um erro!");
+        }
+    }
+
 }
