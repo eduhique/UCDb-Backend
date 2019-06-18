@@ -30,6 +30,8 @@ public class BackendApplication {
         FilterRegistrationBean filterRb = new FilterRegistrationBean();
         filterRb.setFilter(new TokenFilter());
         filterRb.addUrlPatterns("/v1/users/all");
+        filterRb.addUrlPatterns("/v1/users/deleteAll");
+        filterRb.addUrlPatterns("/v1/disciplina/crudall");
         return filterRb;
     }
 

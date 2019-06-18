@@ -27,7 +27,7 @@ public class UserController {
         User newUser = userService.create(user);
 
         if (newUser == null) {
-            throw new InternalError("Something went wrong");
+            throw new InternalError("Algo deu errado");
         }
 
         return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
@@ -38,7 +38,7 @@ public class UserController {
         List<User> users = userService.findAll();
 
         if (users == null) {
-            throw new UserExistsException("There are no users");
+            throw new UserExistsException("Não existe usuarios");
         }
 
         return new ResponseEntity<List<User>>( users, HttpStatus.OK);
@@ -50,7 +50,7 @@ public class UserController {
             userService.deleteAll();
             return new ResponseEntity(HttpStatus.OK);
         } catch (Exception e) {
-            throw new InternalError("Ocorreu um erro!");
+            throw new InternalError("Algo deu errado");
         }
     }
 

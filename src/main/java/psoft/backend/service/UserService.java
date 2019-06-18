@@ -23,12 +23,12 @@ public class UserService {
         user.setEmail(user.getEmail().toLowerCase());
         User userVerify = findByEmail(user.getEmail());
         if (user.getPrimeiroNome() == null) throw new UserNullException("O primeiro nome não pode ser Null");
-        if (user.getPrimeiroNome().trim().equals("")) throw new UserInvalidoException("Deve inserir um nome valido");
-        if (!user.validarEmail()) throw new UserEmailInvalidoException("Insira um e-mail valido");
-        if(user.getSenha().length() < 8 || user.getSenha().length() > 15) throw new UserInvalidoException("Deve inserir uma senha valida");
+        if (user.getPrimeiroNome().trim().equals("")) throw new UserInvalidoException("O primeiro nome não pode ser vazio, insira um nome valido");
+        if (!user.validarEmail()) throw new UserEmailInvalidoException("Insira um e-mail válido");
+        if(user.getSenha().length() < 8 || user.getSenha().length() > 15) throw new UserInvalidoException("Deve inserir uma senha válida");
 
         if (!(userVerify == null)) {
-            throw new UserExistsException("Email Já Cadastrado");
+            throw new UserExistsException("Email já Cadastrado");
         }
 
         return userDAO.save(user);
