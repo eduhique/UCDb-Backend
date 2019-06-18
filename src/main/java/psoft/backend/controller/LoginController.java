@@ -32,11 +32,11 @@ public class LoginController {
         // verificacoes
         if (!user.validarEmail()) throw new UserEmailInvalidoException("Insira um e-mail valido");
         if (authUser == null) {
-            throw new ServletException("Usuario nao encontrado!");
+            throw new ServletException("Usuario não encontrado!");
         }
 
         if (!authUser.getSenha().equals(user.getSenha())) {
-            throw new ServletException("Senha invalida!");
+            throw new ServletException("Senha Inválida!");
         }
 
         String token = Jwts.builder().
