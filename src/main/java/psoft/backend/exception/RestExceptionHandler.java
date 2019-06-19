@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import psoft.backend.exception.disciplina.DisciplinaNotFoundException;
+import psoft.backend.exception.perfil.PerfilNotFoundException;
 import psoft.backend.exception.user.UserEmailInvalidoException;
 import psoft.backend.exception.user.UserExistsException;
 import psoft.backend.exception.user.UserInvalidoException;
@@ -24,7 +25,7 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({DisciplinaNotFoundException.class, })
+    @ExceptionHandler({DisciplinaNotFoundException.class, PerfilNotFoundException.class})
     public ResponseEntity<CustomRestError> notFound(Exception ex, WebRequest request) {
         CustomRestError errorMessage = new CustomRestError(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.NOT_FOUND);

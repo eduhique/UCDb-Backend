@@ -1,10 +1,10 @@
 package psoft.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,15 +20,20 @@ public class User {
     private String email;
     private String senha;
 
+    @OneToMany
+    @JsonBackReference(value = "perfil")
+    private List<User> curtidas;
+
+
     public User() {
     }
 
-    public User(String primeiroNome, String ultimoNome, String email, String senha) {
-
+    public User(String primeiroNome, String ultimoNome, String email, String senha, List<User> curtidas) {
         this.primeiroNome = primeiroNome;
         this.ultimoNome = ultimoNome;
         this.email = email;
         this.senha = senha;
+        this.curtidas = curtidas;
     }
 
     public boolean validarEmail() {

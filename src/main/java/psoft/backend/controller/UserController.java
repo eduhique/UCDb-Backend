@@ -1,5 +1,6 @@
 package psoft.backend.controller;
 
+import io.jsonwebtoken.Jwts;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/all")
-    public ResponseEntity<List<User>> findAll() throws UserExistsException {
+    public ResponseEntity<List<User>> findAll(@RequestHeader("Authorization") String token) throws UserExistsException {
         List<User> users = userService.findAll();
 
         if (users == null) {

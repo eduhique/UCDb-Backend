@@ -29,9 +29,11 @@ public class BackendApplication {
     public FilterRegistrationBean filterJwt(){
         FilterRegistrationBean filterRb = new FilterRegistrationBean();
         filterRb.setFilter(new TokenFilter());
+        filterRb.addUrlPatterns("/v1/perfil/");
         filterRb.addUrlPatterns("/v1/users/all");
         filterRb.addUrlPatterns("/v1/users/deleteAll");
-        filterRb.addUrlPatterns("/v1/disciplina/crudall");
+        filterRb.addUrlPatterns("/v1/perfil/disciplina/createall");
+        filterRb.addUrlPatterns("/v1/perfil/createall");
         return filterRb;
     }
 

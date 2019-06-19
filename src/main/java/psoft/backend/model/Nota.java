@@ -1,35 +1,30 @@
 package psoft.backend.model;
 
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
 import javax.persistence.*;
 
-@Data
 @Entity
-public class Disciplina {
+@Data
+public class Nota {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String nome;
-
-    @OneToOne
+    @ManyToOne
     @JsonBackReference(value = "perfil")
     private Perfil perfil;
 
-    public Disciplina() {
-    }
+    @OneToOne
+    private User user;
 
-    public Disciplina(String nome, Perfil perfil) {
-        this.nome = nome;
+    private double nota;
+
+    public Nota(Perfil perfil, User user, double nota) {
         this.perfil = perfil;
-    }
-
-    @Override
-    public String toString() {
-        return id + " - " + nome;
+        this.user = user;
+        this.nota = nota;
     }
 }
