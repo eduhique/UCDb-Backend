@@ -2,6 +2,9 @@ package psoft.backend.controller;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,13 +27,25 @@ public class LoginController {
     private UserService userService;
 
     @PostMapping("/")
+    @ApiOperation(value = "Autententicar um usuário", notes = "Essa Operação recebe um usuário verifica seu cadastro no" +
+            " banco de dados e, caso esteja cadastrado, gera um token único", response = LoginResponse.class)
+    @ApiResponses(value= {
+            @ApiResponse(
+                    code=201,
+                    message="Retorna um LoginResponse com o token",
+                    response=LoginResponse.class
+            )
+    })
     public LoginResponse authenticate(@RequestBody User user) throws ServletException {
+        if (user == null) {
+            throw new ServletException("Usuario não encontrado!");
+        }
+
+        if (!user.validarEmail()) throw new UserEmailInvalidoException("Insira um e-mail valido");
 
         // Recupera o usuario
         User authUser = userService.findByEmail(user.getEmail().toLowerCase());
 
-        // verificacoes
-        if (!user.validarEmail()) throw new UserEmailInvalidoException("Insira um e-mail valido");
         if (authUser == null) {
             throw new ServletException("Usuario não encontrado!");
         }

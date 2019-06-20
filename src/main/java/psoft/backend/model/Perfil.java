@@ -80,4 +80,8 @@ public class Perfil {
     public void setUserAtual(User userAtual) {
         this.userAtual = userAtual;
     }
+
+    public void addComentario(Comentario comentario){
+        comentarios.add(comentario);
+    }
 }

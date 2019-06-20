@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,20 +26,29 @@ public class Comentario {
 
     private String text;
 
-    private String tempo;
+    private String hora;
+    private String data;
 
     @OneToMany
-    @JsonBackReference(value = "comentario")
     private List<Comentario> comentarios;
 
     public Comentario() {
     }
 
-    public Comentario(Perfil perfil, User user, String text, String tempo, List<Comentario> comentarios) {
+    public Comentario(Perfil perfil, User user, String text, String hora, String data, List<Comentario> comentarios) {
         this.perfil = perfil;
         this.user = user;
         this.text = text;
-        this.tempo = tempo;
+        this.hora = hora;
+        this.data = data;
         this.comentarios = comentarios;
+    }
+
+    public void addComentario(Comentario resposta) {
+        comentarios.add(resposta);
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
     }
 }

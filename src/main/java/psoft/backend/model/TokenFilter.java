@@ -1,5 +1,6 @@
 package psoft.backend.model;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.web.filter.GenericFilterBean;
@@ -32,7 +33,7 @@ public class TokenFilter extends GenericFilterBean {
 
         try {
             Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-        }catch(SignatureException e) {
+        }catch(ExpiredJwtException e) {
             throw new ServletException("Token invalido ou expirado!");
         }
 
@@ -47,7 +48,7 @@ public class TokenFilter extends GenericFilterBean {
         String result;
         try {
             result = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
-        }catch(SignatureException e) {
+        }catch(ExpiredJwtException e) {
             throw new ServletException("Token invalido ou expirado!");
         }
         return result;

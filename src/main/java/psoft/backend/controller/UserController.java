@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/all")
-    public ResponseEntity<List<User>> findAll(@RequestHeader("Authorization") String token) throws UserExistsException {
+    public ResponseEntity<List<User>> findAll() {
         List<User> users = userService.findAll();
 
         if (users == null) {
