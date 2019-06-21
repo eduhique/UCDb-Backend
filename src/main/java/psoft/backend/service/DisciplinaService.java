@@ -2,6 +2,7 @@ package psoft.backend.service;
 
 import org.springframework.stereotype.Service;
 import psoft.backend.dao.DisciplinaDAO;
+import psoft.backend.dao.PerfilDAO;
 import psoft.backend.model.Disciplina;
 
 import java.util.*;
@@ -10,6 +11,8 @@ import java.util.*;
 public class DisciplinaService {
 
     private final DisciplinaDAO disciplinaDAO;
+
+
 
     public DisciplinaService(DisciplinaDAO disciplinaDAO) {
         this.disciplinaDAO = disciplinaDAO;
@@ -43,4 +46,6 @@ public class DisciplinaService {
         }
         return result;
     }
+
+
 }

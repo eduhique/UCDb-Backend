@@ -1,34 +1,47 @@
 package psoft.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@ApiModel(value = "Usuário", description = "Modelo de um usuário do sistema")
 @Data
 @Entity
 @Table(name="users")
 public class User {
 
+    @ApiModelProperty(value = "Primeiro nome do usuário.", example = "Eduardo", position = 0)
     private String primeiroNome;
+    @ApiModelProperty(value = "Último nome do usuário.", example = "Pontes", position = 1)
     private String ultimoNome;
 
+    @ApiModelProperty(value = "e-mail do usuário. Este atributo é um identificador único de usuario.", example = "eduardo.henrique.silva@ccc.ufcg.edu.br", position = 2)
     @Id
     private String email;
+    @ApiModelProperty(value = "senha do usuário. A senha deve conter entre 8 e 15 caracteres,", example = "teste123", position = 3)
     private String senha;
+
+    @OneToMany
+    @JsonBackReference(value = "perfil")
+    @ApiModelProperty(value = "lista de curtidas que o usuário fez nos perfis das disciplinas.", hidden = true)
+    private List<User> curtidas;
+
 
     public User() {
     }
 
-    public User(String primeiroNome, String ultimoNome, String email, String senha) {
-
+    public User(String primeiroNome, String ultimoNome, String email, String senha, List<User> curtidas) {
         this.primeiroNome = primeiroNome;
         this.ultimoNome = ultimoNome;
         this.email = email;
         this.senha = senha;
+        this.curtidas = curtidas;
     }
 
     public boolean validarEmail() {
