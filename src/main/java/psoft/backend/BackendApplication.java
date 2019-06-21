@@ -32,8 +32,11 @@ public class BackendApplication {
         filterRb.addUrlPatterns("/v1/perfil/");
         filterRb.addUrlPatterns("/v1/users/all");
         filterRb.addUrlPatterns("/v1/users/deleteAll");
-        filterRb.addUrlPatterns("/v1/perfil/disciplina/createall");
-        filterRb.addUrlPatterns("/v1/perfil/createall");
+        filterRb.addUrlPatterns("/v1/perfil/");
+        filterRb.addUrlPatterns("/v1/perfil/all");
+        filterRb.addUrlPatterns("/v1/perfil/comentario/create");
+        filterRb.addUrlPatterns("/v1/perfil/comentario/resposta");
+        filterRb.addUrlPatterns("/v1/perfil/comentario/all");
         return filterRb;
     }
 
