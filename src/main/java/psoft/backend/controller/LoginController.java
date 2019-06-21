@@ -2,9 +2,7 @@ package psoft.backend.controller;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import psoft.backend.exception.user.UserEmailInvalidoException;
 import psoft.backend.model.User;
 import psoft.backend.service.UserService;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.ServletException;
 import java.util.Date;
@@ -36,6 +35,7 @@ public class LoginController {
                     response=LoginResponse.class
             )
     })
+    @ApiImplicitParams(@ApiImplicitParam())
     public LoginResponse authenticate(@RequestBody User user) throws ServletException {
         if (user == null) {
             throw new ServletException("Usuario não encontrado!");
@@ -64,7 +64,12 @@ public class LoginController {
         
     }
 
+    @ApiModel(value = "Login Response", description = "Modelo de uma Response do login. Esse modelo tem como obejtivo" +
+            " estrutar a response da autenticação dos usuários que estão logando")
     private class LoginResponse {
+
+        @ApiModelProperty(value = "Token do usuário logado",example = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlZHVhcmRvaGVucmlx" +
+                "dWUzOEBsaXZlLmNvbSIsImV4cCI6MTU2MTA4NzM3M30.NEJoipQvJ...")
         public String token;
 
         public LoginResponse(String token) {

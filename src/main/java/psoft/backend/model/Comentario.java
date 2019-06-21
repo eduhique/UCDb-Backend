@@ -1,36 +1,47 @@
 package psoft.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
+
+@ApiModel(value = "Comentário", description = "Modelo de um Comentário. Esse modelo representa a entidade disciplina" +
+        " no banco de dados e possui as funções básicas de getters e setters para seus atributos.")
 @Entity
 @Data
 public class Comentario {
 
+    @ApiModelProperty(value = "Identificador único do comentário.", example = "1", position = 0)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @ApiModelProperty(value = "Perfil ao qual o comentário é ligado.", position = 5)
     @ManyToOne
     @JsonBackReference(value = "perfil")
     private Perfil perfil;
 
+    @ApiModelProperty(value = "Usuário que fez o comentário.", position = 2)
     @OneToOne
     private User user;
 
+    @ApiModelProperty(value = "Texto do comentário", example = "Essa disciplina é muito boa. Ótimos professores!!!", position = 1)
     private String text;
 
+    @ApiModelProperty(value = "Hora em que foi feito o comentário", example = "2:00", position = 3)
     private String hora;
+    @ApiModelProperty(value = "Data em que foi feito o comentário", example = "20/06/2019", position = 4)
     private String data;
+    @ApiModelProperty(value = "Boleando que indica se um comentário foi apagado(true) ou não", example = "true", position = 7)
+    private boolean apagado;
 
+    @ApiModelProperty(value = "Lista de resposta que um comentário pode ter.", position = 6)
     @OneToMany
-    private List<Comentario> comentarios;
+    private List<Comentario> respostas;
 
     public Comentario() {
     }
@@ -41,14 +52,14 @@ public class Comentario {
         this.text = text;
         this.hora = hora;
         this.data = data;
-        this.comentarios = comentarios;
+        this.respostas = comentarios;
     }
 
-    public void addComentario(Comentario resposta) {
-        comentarios.add(resposta);
+    public void addResposta(Comentario resposta) {
+        respostas.add(resposta);
     }
 
-    public List<Comentario> getComentarios() {
-        return comentarios;
+    public List<Comentario> getResposta() {
+        return respostas;
     }
 }

@@ -2,7 +2,6 @@ package psoft.backend.model;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;

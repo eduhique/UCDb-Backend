@@ -1,25 +1,35 @@
 package psoft.backend.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
 import java.util.List;
 
+@ApiModel(value = "Perfil", description = "Modelo do perfil de uma disciplina. Nesse modelos é possivel criar um perfil " +
+        " adicionar um comentário, uma nota e um curtida")
 @Entity
 public class Perfil {
 
+    @ApiModelProperty(value = "Identificador único do perfil.", example = "1", position = 0)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @ApiModelProperty(value = "Disciplina ao Qual o perfil está associado.", example = "PROJETO DE SOFTWARE", position = 1)
     @OneToOne
     private Disciplina disciplina;
 
+    @ApiModelProperty(value = "Comentários feitos no Perfil de uma disciplina.", position = 2)
     @OneToMany
     private List<Comentario> comentarios;
 
+    @ApiModelProperty(value = "Lista dos usuários que curtiram o perfil da disciplina.", position = 3)
     @ManyToMany
     @JoinTable(name = "curtidas", joinColumns = {@JoinColumn(name = "perfil_id")}, inverseJoinColumns = {@JoinColumn(name = "user_email")})
     private List<User> curtidas;
 
+    @ApiModelProperty(value = "Notas que os usuários deram a disciplina.", position = 4)
     @ManyToMany
     private List<Nota> notas;
 
