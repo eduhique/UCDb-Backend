@@ -1,16 +1,17 @@
 package psoft.backend.controller;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import psoft.backend.exception.user.UserExistsException;
+import psoft.backend.exception.user.UserNotFoundException;
+import psoft.backend.model.TokenFilter;
 import psoft.backend.model.User;
 import psoft.backend.service.UserService;
 
+import javax.persistence.Id;
+import javax.servlet.ServletException;
 import java.util.List;
 
 @RestController
@@ -68,6 +69,10 @@ public class UserController {
                     response = User.class
             ),
             @ApiResponse(
+                    code = 404,
+                    message = "Retorna uma mensagem de erro com a UserNotFoundException"
+            ),
+            @ApiResponse(
                     code = 500,
                     message = "Caso tenhamos algum erro vamos retornar uma Exception."
             )
@@ -78,7 +83,7 @@ public class UserController {
         List<User> users = userService.findAll();
 
         if (users == null) {
-            throw new UserExistsException("Não existe usuarios");
+            throw new UserNotFoundException("Não existe usuarios");
         }
 
         return new ResponseEntity<List<User>>(users, HttpStatus.OK);
@@ -93,14 +98,41 @@ public class UserController {
             )
 
     })
-    @DeleteMapping(value = "/deleteAll")
+    @DeleteMapping(value = "/deleteall")
     public ResponseEntity deleteAll() {
         try {
             userService.deleteAll();
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity("Usuários Deletados :D",HttpStatus.OK);
         } catch (Exception e) {
             throw new InternalError("Algo deu errado");
         }
     }
 
+    @ApiOperation(value = "Retornar usuário da sessão", notes = "Essa Operação retorna o usuário logado no sistema."
+            , response = User.class)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Retorna o usuário Logado."
+
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "Retorna uma mensagem de erro com a UserNotFoundException"
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "Caso tenhamos algum erro vamos retornar uma Exception."
+            )
+
+    })
+    @GetMapping(value = "/getuser")
+    @ResponseBody
+    public ResponseEntity<User> getUserLogado(@RequestHeader("Authorization") String token) throws ServletException {
+        User user = userService.findByEmail(userService.getLogin(token));
+        if (user == null) {
+            throw new UserNotFoundException("Usuário não existe!");
+        }
+        return new ResponseEntity<User>(user, HttpStatus.OK);
+    }
 }

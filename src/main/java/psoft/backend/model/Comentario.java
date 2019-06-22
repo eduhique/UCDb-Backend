@@ -1,6 +1,7 @@
 package psoft.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -32,10 +33,14 @@ public class Comentario {
     @ApiModelProperty(value = "Texto do comentário", example = "Essa disciplina é muito boa. Ótimos professores!!!", position = 1)
     private String text;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @ApiModelProperty(value = "Hora em que foi feito o comentário", example = "2:00", position = 3)
     private String hora;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @ApiModelProperty(value = "Data em que foi feito o comentário", example = "20/06/2019", position = 4)
     private String data;
+
     @ApiModelProperty(value = "Boleando que indica se um comentário foi apagado(true) ou não", example = "true", position = 7)
     private boolean apagado;
 
@@ -59,7 +64,9 @@ public class Comentario {
         respostas.add(resposta);
     }
 
-    public List<Comentario> getResposta() {
-        return respostas;
+    public String getText() {
+        String result = "";
+        if (!apagado) result = text;
+        return result;
     }
 }

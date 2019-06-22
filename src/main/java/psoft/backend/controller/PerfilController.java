@@ -12,7 +12,10 @@ import psoft.backend.exception.comentario.ComentarioNullException;
 import psoft.backend.exception.disciplina.DisciplinaNotFoundException;
 import psoft.backend.exception.perfil.PerfilNotFoundException;
 import psoft.backend.exception.user.UserNotFoundException;
-import psoft.backend.model.*;
+import psoft.backend.model.Comentario;
+import psoft.backend.model.Disciplina;
+import psoft.backend.model.Perfil;
+import psoft.backend.model.User;
 import psoft.backend.service.ComentarioService;
 import psoft.backend.service.DisciplinaService;
 import psoft.backend.service.PerfilService;
@@ -34,14 +37,12 @@ public class PerfilController {
     private final PerfilService perfilService;
     private final UserService userService;
     private final ComentarioService comentarioService;
-    private TokenFilter tokenFilter;
 
     public PerfilController(DisciplinaService disciplinaService, PerfilService perfilService, UserService userService, ComentarioService comentarioService) {
         this.disciplinaService = disciplinaService;
         this.perfilService = perfilService;
         this.userService = userService;
         this.comentarioService = comentarioService;
-        this.tokenFilter = new TokenFilter();
     }
 
     @ApiOperation(value = "Cria Disciplinas e Perfis", notes = "Essa Operação cria diciplinas e perfis a partir um" +
@@ -178,9 +179,9 @@ public class PerfilController {
         }
 
         Perfil perfil = perfilService.findById(dis.getPerfil().getId());
-        User user = userService.findByEmail(tokenFilter.getLogin(token));
+        User user = userService.findByEmail(userService.getLogin(token));
         if (user == null) {
-            throw new UserNotFoundException("Perfil não encontrado!");
+            throw new UserNotFoundException("Usuário não encontrado!");
         }
         perfil.setUserAtual(user);
 
@@ -221,6 +222,10 @@ public class PerfilController {
                     response = Comentario.class
             ),
             @ApiResponse(
+                    code = 400,
+                    message = "Retorna uma mensagem de erro com uma Exception."
+            ),
+            @ApiResponse(
                     code = 404,
                     message = "Retorna uma mensagem de erro com uma Exception"
             )
@@ -230,9 +235,9 @@ public class PerfilController {
     @ResponseBody
     public ResponseEntity<Comentario> createComentario(@RequestParam(name = "id", required = false, defaultValue = "0") long id, @RequestHeader("Authorization") String token, @RequestBody Comentario comentario) throws ServletException {
         Perfil perfil = perfilService.findById(id);
-        User user = userService.findByEmail(tokenFilter.getLogin(token));
+        User user = userService.findByEmail(userService.getLogin(token));
         if (user == null) {
-            throw new UserNotFoundException("Perfil não encontrado!");
+            throw new UserNotFoundException("Usuário não encontrado!");
         }
         if (perfil == null) {
             throw new PerfilNotFoundException("Perfil não encontrado!");
@@ -262,6 +267,10 @@ public class PerfilController {
                     response = Comentario.class
             ),
             @ApiResponse(
+                    code = 400,
+                    message = "Retorna uma mensagem de erro com uma Exception."
+            ),
+            @ApiResponse(
                     code = 404,
                     message = "Retorna uma mensagem de erro com uma Exception"
             )
@@ -271,9 +280,9 @@ public class PerfilController {
     @ResponseBody
     public ResponseEntity<Comentario> createResposta(@RequestParam(name = "id", required = false, defaultValue = "0") long comentarioId, @RequestHeader("Authorization") String token, @RequestBody Comentario resposta) throws ServletException {
         Comentario comentario = comentarioService.findById(comentarioId);
-        User user = userService.findByEmail(tokenFilter.getLogin(token));
+        User user = userService.findByEmail(userService.getLogin(token));
         if (user == null) {
-            throw new UserNotFoundException("Perfil não encontrado!");
+            throw new UserNotFoundException("Usuário não encontrado!");
         }
         if (resposta == null) {
             throw new ComentarioNullException("Comentário não é valido");
@@ -317,5 +326,31 @@ public class PerfilController {
         return new ResponseEntity<List<Comentario>>(comentarios, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Deletar Um comentário", notes = "Essa Operação deleta um comentário ou resposta.", response = Comentario.class)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Retorna um comentário atualizado",
+                    response = Comentario.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "Retorna uma mensagem de erro com a ComentarioNotFoundException"
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Retorna uma mensagem de erro com uma Exception."
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "Caso tenhamos algum erro vamos retornar uma Exception."
+            )
 
+    })
+    @DeleteMapping(value = "/comentario/delete")
+    public ResponseEntity<Comentario> ComentarioDelete(@RequestParam(name = "Comentario-id", required = false, defaultValue = "0") long comentarioId, @RequestHeader("Authorization") String token) throws ServletException {
+        Comentario comentario = comentarioService.deleteUpdate(comentarioId, userService.getLogin(token));
+        return new ResponseEntity<Comentario>(comentario,HttpStatus.OK);
+    }
+    
 }

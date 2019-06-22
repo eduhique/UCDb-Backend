@@ -2,9 +2,12 @@ package psoft.backend.service;
 
 import org.springframework.stereotype.Service;
 import psoft.backend.dao.ComentarioDAO;
+import psoft.backend.exception.comentario.ComentarioDeleteException;
 import psoft.backend.exception.comentario.ComentarioInvalidoException;
+import psoft.backend.exception.comentario.ComentarioNotFoundException;
 import psoft.backend.exception.comentario.ComentarioNullException;
 import psoft.backend.model.Comentario;
+import psoft.backend.model.User;
 
 import java.util.List;
 
@@ -30,5 +33,16 @@ public class ComentarioService {
 
     public List<Comentario> findAll() {
         return comentarioDAO.findAll();
+    }
+
+    public Comentario deleteUpdate(long comentarioId, String userMail) {
+        Comentario comentario = comentarioDAO.findById(comentarioId);
+        if(comentario == null){
+            throw new ComentarioNotFoundException("Comentário não encontrado!!");
+        }if (!(comentario.getUser().getEmail().equals(userMail))){
+            throw new ComentarioDeleteException("Esse comentário não pertece ao usuário passado no token");
+        }
+        comentario.setApagado(true);
+        return comentarioDAO.save(comentario);
     }
 }

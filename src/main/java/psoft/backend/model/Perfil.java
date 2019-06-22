@@ -1,5 +1,6 @@
 package psoft.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -33,6 +34,7 @@ public class Perfil {
     @ManyToMany
     private List<Nota> notas;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Transient
     private User userAtual;
 

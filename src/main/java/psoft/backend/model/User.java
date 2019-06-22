@@ -1,9 +1,13 @@
 package psoft.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
 import java.util.List;
@@ -24,6 +28,8 @@ public class User {
     @ApiModelProperty(value = "e-mail do usuário. Este atributo é um identificador único de usuario.", example = "eduardo.henrique.silva@ccc.ufcg.edu.br", position = 2)
     @Id
     private String email;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ApiModelProperty(value = "senha do usuário. A senha deve conter entre 8 e 15 caracteres,", example = "teste123", position = 3)
     private String senha;
 

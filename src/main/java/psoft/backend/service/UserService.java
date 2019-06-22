@@ -6,17 +6,21 @@ import psoft.backend.exception.user.UserEmailInvalidoException;
 import psoft.backend.exception.user.UserExistsException;
 import psoft.backend.exception.user.UserInvalidoException;
 import psoft.backend.exception.user.UserNullException;
+import psoft.backend.model.TokenFilter;
 import psoft.backend.model.User;
 
+import javax.servlet.ServletException;
 import java.util.List;
 
 @Service
 public class UserService {
 
     private final UserDAO userDAO;
+    private TokenFilter tokenFilter;
 
     UserService(UserDAO userDAO) {
         this.userDAO = userDAO;
+        this.tokenFilter = new TokenFilter();
     }
 
     public User create(User user) throws UserExistsException {
@@ -44,5 +48,9 @@ public class UserService {
 
     public void deleteAll() {
         userDAO.deleteAll();
+    }
+
+    public String getLogin(String auth) throws ServletException {
+        return tokenFilter.getLogin(auth);
     }
 }
