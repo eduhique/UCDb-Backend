@@ -3,11 +3,10 @@ package psoft.backend.service;
 import org.springframework.stereotype.Service;
 import psoft.backend.dao.ComentarioDAO;
 import psoft.backend.exception.comentario.ComentarioDeleteException;
-import psoft.backend.exception.comentario.ComentarioInvalidoException;
 import psoft.backend.exception.comentario.ComentarioNotFoundException;
 import psoft.backend.exception.comentario.ComentarioNullException;
+import psoft.backend.exception.perfil.PerfilNotFoundException;
 import psoft.backend.model.Comentario;
-import psoft.backend.model.User;
 
 import java.util.List;
 
@@ -28,11 +27,19 @@ public class ComentarioService {
     }
 
     public Comentario findById (long id){
-        return comentarioDAO.findById(id);
+        Comentario comentario = comentarioDAO.findById(id);
+        if (comentario == null) {
+            throw new ComentarioNullException("Comentário não existe");
+        }
+        return comentario;
     }
 
     public List<Comentario> findAll() {
-        return comentarioDAO.findAll();
+        List<Comentario> comentarios = comentarioDAO.findAll();
+        if (comentarios.isEmpty()) {
+            throw new PerfilNotFoundException("Não há disciplinas cadastradas");
+        }
+        return comentarios;
     }
 
     public Comentario deleteUpdate(long comentarioId, String userMail) {

@@ -1,16 +1,15 @@
 package psoft.backend.controller;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import psoft.backend.exception.user.UserExistsException;
-import psoft.backend.exception.user.UserNotFoundException;
-import psoft.backend.model.TokenFilter;
 import psoft.backend.model.User;
 import psoft.backend.service.UserService;
 
-import javax.persistence.Id;
 import javax.servlet.ServletException;
 import java.util.List;
 
@@ -50,13 +49,10 @@ public class UserController {
     @PostMapping(value = "/")
     @ResponseBody
     public ResponseEntity<User> createUser(@RequestBody User user) throws UserExistsException {
-
         User newUser = userService.create(user);
-
         if (newUser == null) {
             throw new InternalError("Algo deu errado");
         }
-
         return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
     }
 
@@ -81,11 +77,6 @@ public class UserController {
     @GetMapping(value = "/all")
     public ResponseEntity<List<User>> findAll() {
         List<User> users = userService.findAll();
-
-        if (users == null) {
-            throw new UserNotFoundException("Não existe usuarios");
-        }
-
         return new ResponseEntity<List<User>>(users, HttpStatus.OK);
     }
 
@@ -98,7 +89,7 @@ public class UserController {
             )
 
     })
-    @DeleteMapping(value = "/deleteall")
+    @DeleteMapping(value = "/delete/all")
     public ResponseEntity deleteAll() {
         try {
             userService.deleteAll();
@@ -130,9 +121,6 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<User> getUserLogado(@RequestHeader("Authorization") String token) throws ServletException {
         User user = userService.findByEmail(userService.getLogin(token));
-        if (user == null) {
-            throw new UserNotFoundException("Usuário não existe!");
-        }
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 }

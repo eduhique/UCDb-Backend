@@ -52,12 +52,22 @@ public class Perfil {
     public long getId() {
         return id;
     }
+
     public String getDisciplina() {
         return disciplina.getNome();
     }
 
     public int getCurtidas() {
         return curtidas.size();
+    }
+
+    public Boolean getCurtidaUser() {
+        return curtidas.contains(userAtual);
+    }
+
+    public void setCurtidasUser(User user) {
+        if (this.curtidas.contains(user)) this.curtidas.remove(user);
+        else this.curtidas.add(user);
     }
 
     public double getNota() {
@@ -73,9 +83,10 @@ public class Perfil {
         }
         return notaFinal;
     }
-    public double getNotaUser(){
+
+    public double getNotaUser() {
         double result = 0;
-        if(notas.contains(userAtual)){
+        if (notas.contains(userAtual)) {
             result = notas.get(notas.indexOf(userAtual)).getNota();
         }
         return result;
@@ -86,14 +97,11 @@ public class Perfil {
         return comentarios;
     }
 
-    public Boolean getCurtidaUser() {
-        return curtidas.contains(userAtual);
-    }
     public void setUserAtual(User userAtual) {
         this.userAtual = userAtual;
     }
 
-    public void addComentario(Comentario comentario){
+    public void addComentario(Comentario comentario) {
         comentarios.add(comentario);
     }
 }

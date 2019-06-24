@@ -2,10 +2,7 @@ package psoft.backend.service;
 
 import org.springframework.stereotype.Service;
 import psoft.backend.dao.UserDAO;
-import psoft.backend.exception.user.UserEmailInvalidoException;
-import psoft.backend.exception.user.UserExistsException;
-import psoft.backend.exception.user.UserInvalidoException;
-import psoft.backend.exception.user.UserNullException;
+import psoft.backend.exception.user.*;
 import psoft.backend.model.TokenFilter;
 import psoft.backend.model.User;
 
@@ -26,7 +23,7 @@ public class UserService {
     public User create(User user) throws UserExistsException {
         if (!user.validarEmail()) throw new UserEmailInvalidoException("Insira um e-mail válido");
         user.setEmail(user.getEmail().toLowerCase());
-        User userVerify = findByEmail(user.getEmail());
+        User userVerify = userDAO.findByEmail(user.getEmail());
         if (user.getPrimeiroNome() == null) throw new UserNullException("O primeiro nome não pode ser Null");
         if (user.getPrimeiroNome().trim().equals("")) throw new UserInvalidoException("O primeiro nome não pode ser vazio, insira um nome valido");
         if(user.getSenha().length() < 8 || user.getSenha().length() > 15) throw new UserInvalidoException("Deve inserir uma senha válida. Uma senha válida possui ente 8 e 15 caracteres");
@@ -39,11 +36,19 @@ public class UserService {
     }
 
     public User findByEmail(String userLogin) {
-        return (userDAO.findByEmail(userLogin));
+        User result = userDAO.findByEmail(userLogin);
+        if (result == null) {
+            throw new UserNotFoundException("Usuário não encontrado!");
+        }
+        return result;
     }
 
     public List<User> findAll() {
-        return userDAO.findAll();
+        List<User> users = userDAO.findAll();
+        if (users.isEmpty()) {
+            throw new UserNotFoundException("Não existe usuarios");
+        }
+        return users;
     }
 
     public void deleteAll() {
