@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 public interface PerfilDAO<T, ID extends Serializable> extends JpaRepository<Perfil, Long> {
 
+    Perfil save(Perfil s);
+
     List<Perfil> saveAll(Iterable disciplinaList);
 
     List<Perfil> findAll();

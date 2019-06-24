@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import psoft.backend.exception.comentario.ComentarioDeleteException;
 import psoft.backend.exception.comentario.ComentarioInvalidoException;
+import psoft.backend.exception.comentario.ComentarioNotFoundException;
 import psoft.backend.exception.comentario.ComentarioNullException;
 import psoft.backend.exception.disciplina.DisciplinaNotFoundException;
 import psoft.backend.exception.perfil.PerfilNotFoundException;
@@ -23,7 +25,7 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({DisciplinaNotFoundException.class, PerfilNotFoundException.class, UserNotFoundException.class})
+    @ExceptionHandler({DisciplinaNotFoundException.class, PerfilNotFoundException.class, UserNotFoundException.class, ComentarioNotFoundException.class})
     public ResponseEntity<CustomRestError> notFound(Exception ex, WebRequest request) {
         CustomRestError errorMessage = new CustomRestError(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.NOT_FOUND);
@@ -35,7 +37,7 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler({UserInvalidoException.class, UserNullException.class, ComentarioInvalidoException.class, ComentarioNullException.class})
+    @ExceptionHandler({UserInvalidoException.class, UserNullException.class, ComentarioInvalidoException.class, ComentarioNullException.class, ComentarioDeleteException.class})
     public ResponseEntity<CustomRestError> badRequest(Exception ex, WebRequest request) {
         CustomRestError errorMessage = new CustomRestError(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.BAD_REQUEST);

@@ -9,10 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import psoft.backend.exception.comentario.ComentarioInvalidoException;
 import psoft.backend.exception.comentario.ComentarioNullException;
-import psoft.backend.exception.disciplina.DisciplinaNotFoundException;
-import psoft.backend.exception.perfil.PerfilNotFoundException;
-import psoft.backend.exception.user.UserNotFoundException;
-import psoft.backend.model.*;
+import psoft.backend.model.Comentario;
+import psoft.backend.model.Disciplina;
+import psoft.backend.model.Perfil;
+import psoft.backend.model.User;
 import psoft.backend.service.ComentarioService;
 import psoft.backend.service.DisciplinaService;
 import psoft.backend.service.PerfilService;
@@ -34,14 +34,12 @@ public class PerfilController {
     private final PerfilService perfilService;
     private final UserService userService;
     private final ComentarioService comentarioService;
-    private TokenFilter tokenFilter;
 
     public PerfilController(DisciplinaService disciplinaService, PerfilService perfilService, UserService userService, ComentarioService comentarioService) {
         this.disciplinaService = disciplinaService;
         this.perfilService = perfilService;
         this.userService = userService;
         this.comentarioService = comentarioService;
-        this.tokenFilter = new TokenFilter();
     }
 
     @ApiOperation(value = "Cria Disciplinas e Perfis", notes = "Essa Operação cria diciplinas e perfis a partir um" +
@@ -59,22 +57,11 @@ public class PerfilController {
             )
 
     })
-    @PostMapping(value = "/createall")
+    @PostMapping(value = "/create/all")
     @ResponseBody
-    @ModelAttribute()
     public ResponseEntity<List<Perfil>> createAll(@RequestBody List<Disciplina> disciplina) {
         List<Disciplina> disciplinas = disciplinaService.createAll(disciplina);
-
-        if (disciplinas.isEmpty()) {
-            throw new InternalError("Algo deu errado!!");
-        }
-
-        List<Perfil> perfil = perfilService.createPerfilAll(disciplina);
-
-        if (perfil.isEmpty()) {
-            throw new InternalError("Algo deu errado!!");
-        }
-
+        List<Perfil> perfil = perfilService.createPerfilAll(disciplinas);
         return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.CREATED);
     }
 
@@ -96,11 +83,6 @@ public class PerfilController {
     @ResponseBody
     public ResponseEntity<Disciplina> findById(@PathVariable long id) {
         Disciplina dis = disciplinaService.findById(id);
-
-        if (dis == null) {
-            throw new DisciplinaNotFoundException("Disciplina não encontrada!");
-        }
-
         return new ResponseEntity<Disciplina>(dis, HttpStatus.OK);
     }
 
@@ -119,11 +101,8 @@ public class PerfilController {
 
     })
     @GetMapping(value = "/disciplina/search")
-    public ResponseEntity<List<Disciplina>> searchString(@RequestParam(name = "substring", required = false, defaultValue = "não existe") String substring) {
+    public ResponseEntity<List<Disciplina>> searchString(@RequestParam(name = "substring") String substring) {
         List<Disciplina> searchForString = disciplinaService.searchForString(substring.toUpperCase());
-        if (searchForString.isEmpty()) {
-            throw new DisciplinaNotFoundException("Disciplina não encontrada!");
-        }
         return new ResponseEntity<List<Disciplina>>(searchForString, HttpStatus.OK);
     }
 
@@ -144,14 +123,8 @@ public class PerfilController {
     @GetMapping(value = "/disciplina/all")
     public ResponseEntity<List<Disciplina>> findAll() {
         List<Disciplina> disciplinas = disciplinaService.findAll();
-
-        if (disciplinas.isEmpty()) {
-            throw new DisciplinaNotFoundException("Não há disciplinas cadastradas");
-        }
-
         return new ResponseEntity<List<Disciplina>>(disciplinas, HttpStatus.OK);
     }
-
 
     //perfil
 
@@ -171,19 +144,9 @@ public class PerfilController {
     })
     @GetMapping(value = "/")
     @ResponseBody
-    public ResponseEntity<Perfil> findPerfil(@RequestParam(name = "id", required = false, defaultValue = "0") long id, @RequestHeader("Authorization") String token) throws ServletException {
-        Disciplina dis = disciplinaService.findById(id);
-        if (dis == null) {
-            throw new PerfilNotFoundException("Perfil não encontrado!");
-        }
-
-        Perfil perfil = perfilService.findById(dis.getPerfil().getId());
-        User user = userService.findByEmail(tokenFilter.getLogin(token));
-        if (user == null) {
-            throw new UserNotFoundException("Perfil não encontrado!");
-        }
-        perfil.setUserAtual(user);
-
+    public ResponseEntity<Perfil> findPerfil(@RequestParam(name = "disciplina-id") long id, @RequestHeader("Authorization") String token) throws ServletException {
+        User user = userService.findByEmail(userService.getLogin(token));
+        Perfil perfil = perfilService.findByDisciplinaId(id, user);
         return new ResponseEntity<Perfil>(perfil, HttpStatus.OK);
     }
 
@@ -204,11 +167,6 @@ public class PerfilController {
     @GetMapping(value = "/all")
     public ResponseEntity<List<Perfil>> findPerfilAll() {
         List<Perfil> perfil = perfilService.findAll();
-
-        if (perfil.isEmpty()) {
-            throw new PerfilNotFoundException("Não há disciplinas cadastradas");
-        }
-
         return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.OK);
     }
 
@@ -221,35 +179,29 @@ public class PerfilController {
                     response = Comentario.class
             ),
             @ApiResponse(
+                    code = 400,
+                    message = "Retorna uma mensagem de erro com uma Exception."
+            ),
+            @ApiResponse(
                     code = 404,
                     message = "Retorna uma mensagem de erro com uma Exception"
             )
 
     })
-    @PostMapping(value = "/comentario/create")
+    @PostMapping(value = "/comentario/")
     @ResponseBody
-    public ResponseEntity<Comentario> createComentario(@RequestParam(name = "id", required = false, defaultValue = "0") long id, @RequestHeader("Authorization") String token, @RequestBody Comentario comentario) throws ServletException {
-        Perfil perfil = perfilService.findById(id);
-        User user = userService.findByEmail(tokenFilter.getLogin(token));
-        if (user == null) {
-            throw new UserNotFoundException("Perfil não encontrado!");
-        }
-        if (perfil == null) {
-            throw new PerfilNotFoundException("Perfil não encontrado!");
-        }
+    public ResponseEntity<Comentario> createComentario(@RequestParam(name = "perfil-id") long id, @RequestHeader("Authorization") String token, @RequestBody Comentario comentario) throws ServletException {
+        User user = userService.findByEmail(userService.getLogin(token));
+        Perfil perfil = perfilService.findById(id, user);
         if (comentario == null) {
             throw new ComentarioNullException("Comentário não é valido");
         }
         if (comentario.getText() == null) throw new ComentarioNullException("O comentário não pode ser Null");
         if (comentario.getText().trim().equals(""))
             throw new ComentarioInvalidoException("O comentário não pode ser vazio, insira um comentário valido");
-
         Comentario preComentario = new Comentario(perfil, user, comentario.getText(), LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm")), LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), new ArrayList<Comentario>());
-
         perfil.addComentario(preComentario);
-
         Comentario novoComentario = comentarioService.create(preComentario);
-
         return new ResponseEntity<Comentario>(novoComentario, HttpStatus.CREATED);
     }
 
@@ -262,6 +214,10 @@ public class PerfilController {
                     response = Comentario.class
             ),
             @ApiResponse(
+                    code = 400,
+                    message = "Retorna uma mensagem de erro com uma Exception."
+            ),
+            @ApiResponse(
                     code = 404,
                     message = "Retorna uma mensagem de erro com uma Exception"
             )
@@ -269,12 +225,9 @@ public class PerfilController {
     })
     @PostMapping(value = "/comentario/resposta")
     @ResponseBody
-    public ResponseEntity<Comentario> createResposta(@RequestParam(name = "id", required = false, defaultValue = "0") long comentarioId, @RequestHeader("Authorization") String token, @RequestBody Comentario resposta) throws ServletException {
+    public ResponseEntity<Comentario> createResposta(@RequestParam(name = "comentario-id") long comentarioId, @RequestHeader("Authorization") String token, @RequestBody Comentario resposta) throws ServletException {
         Comentario comentario = comentarioService.findById(comentarioId);
-        User user = userService.findByEmail(tokenFilter.getLogin(token));
-        if (user == null) {
-            throw new UserNotFoundException("Perfil não encontrado!");
-        }
+        User user = userService.findByEmail(userService.getLogin(token));
         if (resposta == null) {
             throw new ComentarioNullException("Comentário não é valido");
         }
@@ -287,9 +240,7 @@ public class PerfilController {
         String data = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         Comentario preComentario = new Comentario(perfil, user, resposta.getText(), hora, data, new ArrayList<Comentario>());
         comentario.addResposta(preComentario);
-
         Comentario novoComentario = comentarioService.create(preComentario);
-
         return new ResponseEntity<Comentario>(novoComentario, HttpStatus.CREATED);
     }
 
@@ -309,13 +260,56 @@ public class PerfilController {
     @GetMapping(value = "/comentario/all")
     public ResponseEntity<List<Comentario>> comentarioALL() {
         List<Comentario> comentarios = comentarioService.findAll();
-
-        if (comentarios.isEmpty()) {
-            throw new PerfilNotFoundException("Não há disciplinas cadastradas");
-        }
-
         return new ResponseEntity<List<Comentario>>(comentarios, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Deletar Um comentário", notes = "Essa Operação deleta um comentário ou resposta.", response = Comentario.class)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Retorna um comentário atualizado",
+                    response = Comentario.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "Retorna uma mensagem de erro com a ComentarioNotFoundException"
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Retorna uma mensagem de erro com uma Exception."
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "Caso tenhamos algum erro vamos retornar uma Exception."
+            )
 
+    })
+    @DeleteMapping(value = "/comentario/delete")
+    public ResponseEntity<Comentario> ComentarioDelete(@RequestParam(name = "Comentario-id") long comentarioId, @RequestHeader("Authorization") String token) throws ServletException {
+        Comentario comentario = comentarioService.deleteUpdate(comentarioId, userService.getLogin(token));
+        return new ResponseEntity<Comentario>(comentario, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Curtir um Perfil", notes = "Essa operação possibilita dar ou retirar like de um perfil.", response = Perfil.class)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Retorna o perfil atualizado.",
+                    response = Perfil.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "Retorna uma mensagem de erro com uma Exception"
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "Caso tenhamos algum erro vamos retornar uma Exception."
+            )
+    })
+    @PutMapping(value = "/like")
+    public ResponseEntity<Perfil> curtirPerfil(@RequestParam(name = "perfil-id") long id, @RequestHeader("Authorization") String token) throws ServletException {
+        User user = userService.findByEmail(userService.getLogin(token));
+        Perfil perfil = perfilService.curtirPerfil(id, user);
+        return new ResponseEntity<Perfil>(perfil, HttpStatus.OK);
+    }
 }

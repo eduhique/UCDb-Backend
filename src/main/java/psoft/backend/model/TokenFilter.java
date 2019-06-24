@@ -27,6 +27,7 @@ public class TokenFilter extends GenericFilterBean {
             throw new ServletException("Token inexistente ou mal formatado!");
         }
 
+        System.out.printf("RESDFSA: %s", req);
         // Extraindo apenas o token do cabecalho.
         String token = header.substring(7);
 

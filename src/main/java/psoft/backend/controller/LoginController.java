@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import psoft.backend.exception.user.UserEmailInvalidoException;
 import psoft.backend.model.User;
 import psoft.backend.service.UserService;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.ServletException;
 import java.util.Date;
@@ -35,7 +34,6 @@ public class LoginController {
                     response=LoginResponse.class
             )
     })
-    @ApiImplicitParams(@ApiImplicitParam())
     public LoginResponse authenticate(@RequestBody User user) throws ServletException {
         if (user == null) {
             throw new ServletException("Usuario não encontrado!");

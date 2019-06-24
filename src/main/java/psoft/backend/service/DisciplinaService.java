@@ -2,10 +2,11 @@ package psoft.backend.service;
 
 import org.springframework.stereotype.Service;
 import psoft.backend.dao.DisciplinaDAO;
-import psoft.backend.dao.PerfilDAO;
+import psoft.backend.exception.disciplina.DisciplinaNotFoundException;
 import psoft.backend.model.Disciplina;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class DisciplinaService {
@@ -13,36 +14,48 @@ public class DisciplinaService {
     private final DisciplinaDAO disciplinaDAO;
 
 
-
     public DisciplinaService(DisciplinaDAO disciplinaDAO) {
         this.disciplinaDAO = disciplinaDAO;
     }
 
-    public List<Disciplina> createAll(List<Disciplina> list){
-        return disciplinaDAO.saveAll(list);
+    public List<Disciplina> createAll(List<Disciplina> list) {
+        List result = disciplinaDAO.saveAll(list);
+        if (result.isEmpty()) {
+            throw new InternalError("Algo deu errado!!");
+        }
+        return result;
     }
 
     public List<Disciplina> findAll() {
-        return disciplinaDAO.findAll();
+        List disciplinas = disciplinaDAO.findAll();
+        if (disciplinas.isEmpty()) {
+            throw new DisciplinaNotFoundException("Não há disciplinas cadastradas");
+        }
+        return disciplinas;
     }
 
     public Disciplina findById(long id) {
-        return disciplinaDAO.findById(id);
+        Disciplina dis = disciplinaDAO.findById(id);
+        if (dis == null) {
+            throw new DisciplinaNotFoundException("Disciplina não encontrada!");
+        }
+        return dis;
     }
 
-    public List<Disciplina> searchForString (String substring){
+    public List<Disciplina> searchForString(String substring) {
         List<Disciplina> search = disciplinaDAO.findAll();
         List<Disciplina> result = new ArrayList<Disciplina>();
-
-        if(search.isEmpty()){
+        if (search.isEmpty()) {
             throw new InternalError("Não há disciplinas cadastradas!");
         }
-
-        for ( Disciplina d : search ) {
+        for (Disciplina d : search) {
             String name = d.getNome();
-            if(name.contains(substring)){
+            if (name.contains(substring)) {
                 result.add(d);
             }
+        }
+        if (result.isEmpty()) {
+            throw new DisciplinaNotFoundException("Disciplina não encontrada!");
         }
         return result;
     }
