@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.List;
 
 @ApiModel(value = "Perfil", description = "Modelo do perfil de uma disciplina. Nesse modelos é possivel criar um perfil " +
@@ -94,7 +95,9 @@ public class Perfil {
 
 
     public List<Comentario> getComentarios() {
-        return comentarios;
+        List<Comentario> saida = comentarios;
+        Collections.reverse(saida);
+        return saida;
     }
 
     public void setUserAtual(User userAtual) {
