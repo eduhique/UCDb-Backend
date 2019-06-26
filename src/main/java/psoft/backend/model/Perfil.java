@@ -31,10 +31,6 @@ public class Perfil {
     @JoinTable(name = "curtidas", joinColumns = {@JoinColumn(name = "perfil_id")}, inverseJoinColumns = {@JoinColumn(name = "user_email")})
     private List<User> curtidas;
 
-    @ApiModelProperty(value = "Notas que os usuários deram a disciplina.", position = 4)
-    @ManyToMany
-    private List<Nota> notas;
-
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Transient
     private User userAtual;
@@ -43,11 +39,10 @@ public class Perfil {
     }
 
 
-    public Perfil(Disciplina disciplina, List<Comentario> comentarios, List<User> curtidas, List<Nota> notas) {
+    public Perfil(Disciplina disciplina, List<Comentario> comentarios, List<User> curtidas) {
         this.disciplina = disciplina;
         this.comentarios = comentarios;
         this.curtidas = curtidas;
-        this.notas = notas;
     }
 
     public long getId() {
@@ -71,33 +66,15 @@ public class Perfil {
         else this.curtidas.add(user);
     }
 
-    public double getNota() {
-        double soma = 0.0;
-        double notaFinal = 0.0;
-        int users = notas.size();
-        if (!notas.isEmpty()) {
-            for (Nota n : notas) {
-                soma += n.getNota();
-                users++;
-                notaFinal = soma / users;
-            }
-        }
-        return notaFinal;
-    }
-
-    public double getNotaUser() {
-        double result = 0;
-        if (notas.contains(userAtual)) {
-            result = notas.get(notas.indexOf(userAtual)).getNota();
-        }
-        return result;
-    }
-
 
     public List<Comentario> getComentarios() {
         List<Comentario> saida = comentarios;
         Collections.reverse(saida);
         return saida;
+    }
+
+    public User getUserAtual() {
+        return userAtual;
     }
 
     public void setUserAtual(User userAtual) {
