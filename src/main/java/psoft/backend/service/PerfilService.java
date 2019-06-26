@@ -23,7 +23,7 @@ public class PerfilService {
     public List<Perfil> createPerfilAll(List<Disciplina> disciplina) {
         List<Perfil> perfils = new ArrayList<Perfil>();
         for (Disciplina d : disciplina) {
-            Perfil p = new Perfil(d, new ArrayList<Comentario>(), new ArrayList<User>(), new ArrayList<Nota>());
+            Perfil p = new Perfil(d, new ArrayList<Comentario>(), new ArrayList<User>());
             perfils.add(p);
             disciplinaService.findById(d.getId()).setPerfil(p);
         }

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import psoft.backend.exception.comentario.ComentarioInvalidoException;
 import psoft.backend.exception.comentario.ComentarioNullException;
 import psoft.backend.model.Comentario;
+import psoft.backend.model.Comparators.ComparaComentario;
+import psoft.backend.model.Comparators.ComparaLike;
 import psoft.backend.model.Disciplina;
 import psoft.backend.model.Perfil;
 import psoft.backend.model.User;
@@ -19,10 +21,11 @@ import psoft.backend.service.PerfilService;
 import psoft.backend.service.UserService;
 
 import javax.servlet.ServletException;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -34,6 +37,7 @@ public class PerfilController {
     private final PerfilService perfilService;
     private final UserService userService;
     private final ComentarioService comentarioService;
+    private Comparator<Disciplina> comparador;
 
     public PerfilController(DisciplinaService disciplinaService, PerfilService perfilService, UserService userService, ComentarioService comentarioService) {
         this.disciplinaService = disciplinaService;
@@ -199,7 +203,9 @@ public class PerfilController {
         if (comentario.getText() == null) throw new ComentarioNullException("O comentário não pode ser Null");
         if (comentario.getText().trim().equals(""))
             throw new ComentarioInvalidoException("O comentário não pode ser vazio, insira um comentário valido");
-        Comentario preComentario = new Comentario(perfil, user, comentario.getText(), LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm")), LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), new ArrayList<Comentario>());
+        String hora = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("HH:mm"));
+        String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/mm/yyyy"));
+        Comentario preComentario = new Comentario(perfil, user, comentario.getText(), hora, data, new ArrayList<Comentario>());
         perfil.addComentario(preComentario);
         Comentario novoComentario = comentarioService.create(preComentario);
         return new ResponseEntity<Comentario>(novoComentario, HttpStatus.CREATED);
@@ -236,8 +242,8 @@ public class PerfilController {
             throw new ComentarioInvalidoException("O comentário não pode ser vazio, insira um comentário valido");
 
         Perfil perfil = comentario.getPerfil();
-        String hora = LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm"));
-        String data = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String hora = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("HH:mm"));
+        String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/mm/yyyy"));
         Comentario preComentario = new Comentario(perfil, user, resposta.getText(), hora, data, new ArrayList<Comentario>());
         comentario.addResposta(preComentario);
         Comentario novoComentario = comentarioService.create(preComentario);
@@ -311,5 +317,23 @@ public class PerfilController {
         User user = userService.findByEmail(userService.getLogin(token));
         Perfil perfil = perfilService.curtirPerfil(id, user);
         return new ResponseEntity<Perfil>(perfil, HttpStatus.OK);
+    }
+
+    // ranking
+
+    @GetMapping(value = "/disciplina/ranking/like")
+    public ResponseEntity<List<Disciplina>> rankigLike() {
+        List<Disciplina> disciplina = disciplinaService.findAll();
+        comparador = new ComparaLike();
+        disciplina.sort(comparador);
+        return new ResponseEntity<List<Disciplina>>(disciplina, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/disciplina/ranking/comentario")
+    public ResponseEntity<List<Disciplina>> rankigComentario() {
+        List<Disciplina> disciplina = disciplinaService.findAll();
+        comparador = new ComparaComentario();
+        disciplina.sort(comparador);
+        return new ResponseEntity<List<Disciplina>>(disciplina, HttpStatus.OK);
     }
 }

@@ -69,4 +69,18 @@ public class Comentario {
         if (!apagado) result = text;
         return result;
     }
+
+    public List<Comentario> getRespostas() {
+        List<Comentario> result = respostas;
+        if(apagado && !result.isEmpty()){
+            for (Comentario c : result) {
+                c.setText("");
+            }
+        }
+        return result;
+    }
+
+//    public Boolean getUserAtual() {
+//        return perfil.getUserAtual().getEmail().equals(user.getEmail());
+//    }
 }
