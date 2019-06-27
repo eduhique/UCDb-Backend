@@ -204,7 +204,7 @@ public class PerfilController {
         if (comentario.getText().trim().equals(""))
             throw new ComentarioInvalidoException("O comentário não pode ser vazio, insira um comentário valido");
         String hora = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("HH:mm"));
-        String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/mm/yyyy"));
+        String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         Comentario preComentario = new Comentario(perfil, user, comentario.getText(), hora, data, new ArrayList<Comentario>());
         perfil.addComentario(preComentario);
         Comentario novoComentario = comentarioService.create(preComentario);
@@ -243,7 +243,7 @@ public class PerfilController {
 
         Perfil perfil = comentario.getPerfil();
         String hora = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("HH:mm"));
-        String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/mm/yyyy"));
+        String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         Comentario preComentario = new Comentario(perfil, user, resposta.getText(), hora, data, new ArrayList<Comentario>());
         comentario.addResposta(preComentario);
         Comentario novoComentario = comentarioService.create(preComentario);
