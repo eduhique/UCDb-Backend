@@ -191,8 +191,9 @@ public class PerfilController {
 
     })
     @GetMapping(value = "/all")
-    public ResponseEntity<List<Perfil>> listaPerfilAll() {
-        List<Perfil> perfil = perfilService.findAll();
+    public ResponseEntity<List<Perfil>> listaPerfilAll(@RequestHeader("Authorization") String token) throws ServletException {
+        User user = userService.findByEmail(userService.getLogin(token));
+        List<Perfil> perfil = perfilService.findAll(user);
         return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.OK);
     }
 
@@ -361,8 +362,9 @@ public class PerfilController {
             )
     })
     @GetMapping(value = "/ranking/like")
-    public ResponseEntity<List<Perfil>> rankigLike() {
-        List<Perfil> perfil = perfilService.findAll();
+    public ResponseEntity<List<Perfil>> rankigLike(@RequestHeader("Authorization") String token) throws ServletException {
+        User user = userService.findByEmail(userService.getLogin(token));
+        List<Perfil> perfil = perfilService.findAll(user);
         comparador = new ComparaLike();
         perfil.sort(comparador);
         return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.OK);
@@ -387,8 +389,9 @@ public class PerfilController {
             )
     })
     @GetMapping(value = "/ranking/comentario")
-    public ResponseEntity<List<Perfil>> rankigComentario() {
-        List<Perfil> perfil = perfilService.findAll();
+    public ResponseEntity<List<Perfil>> rankigComentario(@RequestHeader("Authorization") String token) throws ServletException {
+        User user = userService.findByEmail(userService.getLogin(token));
+        List<Perfil> perfil = perfilService.findAll(user);
         comparador = new ComparaComentario();
         perfil.sort(comparador);
         return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.OK);
