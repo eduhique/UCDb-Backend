@@ -59,7 +59,7 @@ public class PerfilService {
     }
 
     public List<Perfil> findAll() {
-        List perfil = perfilDAO.findAll();
+        List<Perfil> perfil = perfilDAO.findAll();
         if (perfil.isEmpty()) {
             throw new PerfilNotFoundException("Não há disciplinas cadastradas");
         }

@@ -37,7 +37,7 @@ public class PerfilController {
     private final PerfilService perfilService;
     private final UserService userService;
     private final ComentarioService comentarioService;
-    private Comparator<Disciplina> comparador;
+    private Comparator<Perfil> comparador;
 
     public PerfilController(DisciplinaService disciplinaService, PerfilService perfilService, UserService userService, ComentarioService comentarioService) {
         this.disciplinaService = disciplinaService;
@@ -61,7 +61,7 @@ public class PerfilController {
             )
 
     })
-    @PostMapping(value = "/create/all")
+    @PostMapping(value = "/disciplina") // /create/all
     @ResponseBody
     public ResponseEntity<List<Perfil>> createAll(@RequestBody List<Disciplina> disciplina) {
         List<Disciplina> disciplinas = disciplinaService.createAll(disciplina);
@@ -83,9 +83,9 @@ public class PerfilController {
             )
 
     })
-    @GetMapping(value = "/disciplina/{id}")
+    @GetMapping(value = "/disciplina/{id}") // /disciplina/{id}
     @ResponseBody
-    public ResponseEntity<Disciplina> findById(@PathVariable long id) {
+    public ResponseEntity<Disciplina> buscaDisciplina(@PathVariable long id) {
         Disciplina dis = disciplinaService.findById(id);
         return new ResponseEntity<Disciplina>(dis, HttpStatus.OK);
     }
@@ -104,8 +104,8 @@ public class PerfilController {
             )
 
     })
-    @GetMapping(value = "/disciplina/search")
-    public ResponseEntity<List<Disciplina>> searchString(@RequestParam(name = "substring") String substring) {
+    @GetMapping(value = "/disciplina/search") // /disciplina/search
+    public ResponseEntity<List<Disciplina>> buscaPorSubString(@RequestParam(name = "substring") String substring) {
         List<Disciplina> searchForString = disciplinaService.searchForString(substring.toUpperCase());
         return new ResponseEntity<List<Disciplina>>(searchForString, HttpStatus.OK);
     }
@@ -125,12 +125,34 @@ public class PerfilController {
 
     })
     @GetMapping(value = "/disciplina/all")
-    public ResponseEntity<List<Disciplina>> findAll() {
+    public ResponseEntity<List<Disciplina>> listaTudo() {
         List<Disciplina> disciplinas = disciplinaService.findAll();
         return new ResponseEntity<List<Disciplina>>(disciplinas, HttpStatus.OK);
     }
 
     //perfil
+
+    @ApiOperation(value = "Buscar um Perfil por id da Disciplina", notes = "Essa Operação pesquisa um perfil pelo id da Disciplina e o retorna",
+            response = Perfil.class, position = 3)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Retorna um Perfil",
+                    response = Perfil.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "Retorna uma mensagem de erro com a Exception"
+            )
+
+    })
+    @GetMapping(value = "/disciplina/id")  // "/"
+    @ResponseBody
+    public ResponseEntity<Perfil> buscaPerfilPorDisciplina(@RequestParam(name = "disciplina-id") long id, @RequestHeader("Authorization") String token) throws ServletException {
+        User user = userService.findByEmail(userService.getLogin(token));
+        Perfil perfil = perfilService.findByDisciplinaId(id, user);
+        return new ResponseEntity<Perfil>(perfil, HttpStatus.OK);
+    }
 
     @ApiOperation(value = "Buscar um Perfil", notes = "Essa Operação pesquisa um perfil pelo id e o retorna",
             response = Perfil.class, position = 3)
@@ -148,9 +170,9 @@ public class PerfilController {
     })
     @GetMapping(value = "/")
     @ResponseBody
-    public ResponseEntity<Perfil> findPerfil(@RequestParam(name = "disciplina-id") long id, @RequestHeader("Authorization") String token) throws ServletException {
+    public ResponseEntity<Perfil> buscaPerfil(@RequestParam(name = "perfil-id") long id, @RequestHeader("Authorization") String token) throws ServletException {
         User user = userService.findByEmail(userService.getLogin(token));
-        Perfil perfil = perfilService.findByDisciplinaId(id, user);
+        Perfil perfil = perfilService.findById(id, user);
         return new ResponseEntity<Perfil>(perfil, HttpStatus.OK);
     }
 
@@ -169,7 +191,7 @@ public class PerfilController {
 
     })
     @GetMapping(value = "/all")
-    public ResponseEntity<List<Perfil>> findPerfilAll() {
+    public ResponseEntity<List<Perfil>> listaPerfilAll() {
         List<Perfil> perfil = perfilService.findAll();
         return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.OK);
     }
@@ -192,7 +214,7 @@ public class PerfilController {
             )
 
     })
-    @PostMapping(value = "/comentario/")
+    @PostMapping(value = "/comentario") // /comentario/
     @ResponseBody
     public ResponseEntity<Comentario> createComentario(@RequestParam(name = "perfil-id") long id, @RequestHeader("Authorization") String token, @RequestBody Comentario comentario) throws ServletException {
         User user = userService.findByEmail(userService.getLogin(token));
@@ -290,8 +312,8 @@ public class PerfilController {
             )
 
     })
-    @DeleteMapping(value = "/comentario/delete")
-    public ResponseEntity<Comentario> ComentarioDelete(@RequestParam(name = "Comentario-id") long comentarioId, @RequestHeader("Authorization") String token) throws ServletException {
+    @DeleteMapping(value = "/comentario") // /comentario/delete
+    public ResponseEntity<Comentario> ComentarioDelete(@RequestParam(name = "comentario-id") long comentarioId, @RequestHeader("Authorization") String token) throws ServletException {
         Comentario comentario = comentarioService.deleteUpdate(comentarioId, userService.getLogin(token));
         return new ResponseEntity<Comentario>(comentario, HttpStatus.OK);
     }
@@ -321,19 +343,54 @@ public class PerfilController {
 
     // ranking
 
-    @GetMapping(value = "/disciplina/ranking/like")
-    public ResponseEntity<List<Disciplina>> rankigLike() {
-        List<Disciplina> disciplina = disciplinaService.findAll();
+    @ApiOperation(value = "Ranking das disciplinas(por número de likes) ", notes = "Essa operação possibilita visulizar" +
+            " o ranking das disciplinas de ordenados de acordo com a quantidade de likes.", response = Perfil.class)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Retorna uma lista de perfis de disciplinas ordenando",
+                    response = Perfil.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "Retorna uma mensagem de erro com uma Exception"
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "Caso tenhamos algum erro vamos retornar uma Exception."
+            )
+    })
+    @GetMapping(value = "/ranking/like")
+    public ResponseEntity<List<Perfil>> rankigLike() {
+        List<Perfil> perfil = perfilService.findAll();
         comparador = new ComparaLike();
-        disciplina.sort(comparador);
-        return new ResponseEntity<List<Disciplina>>(disciplina, HttpStatus.OK);
+        perfil.sort(comparador);
+        return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/disciplina/ranking/comentario")
-    public ResponseEntity<List<Disciplina>> rankigComentario() {
-        List<Disciplina> disciplina = disciplinaService.findAll();
+    @ApiOperation(value = "Ranking das disciplinas(por número de comentários) ", notes = "Essa operação possibilita visulizar" +
+            " o ranking das disciplinas de ordenados de acordo com a quantidade geral(comentário + respostas a" +
+            " comentários) de cometários.", response = Perfil.class)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Retorna uma lista de perfis de disciplinas ordenando",
+                    response = Perfil.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "Retorna uma mensagem de erro com uma Exception"
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "Caso tenhamos algum erro vamos retornar uma Exception."
+            )
+    })
+    @GetMapping(value = "/ranking/comentario")
+    public ResponseEntity<List<Perfil>> rankigComentario() {
+        List<Perfil> perfil = perfilService.findAll();
         comparador = new ComparaComentario();
-        disciplina.sort(comparador);
-        return new ResponseEntity<List<Disciplina>>(disciplina, HttpStatus.OK);
+        perfil.sort(comparador);
+        return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.OK);
     }
 }

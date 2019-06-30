@@ -30,16 +30,19 @@ public class BackendApplication {
         FilterRegistrationBean filterRb = new FilterRegistrationBean();
         filterRb.setFilter(new TokenFilter());
         filterRb.addUrlPatterns("/v1/users/all");
-        filterRb.addUrlPatterns("/v1/users/delete/all");
+//        filterRb.addUrlPatterns("/v1/users/delete/all");
         filterRb.addUrlPatterns("/v1/users/getuser");
-        filterRb.addUrlPatterns("/v1/perfil/create/all");
+        filterRb.addUrlPatterns("/v1/perfil/disciplina");
+        filterRb.addUrlPatterns("/v1/perfil/disciplina/id");
         filterRb.addUrlPatterns("/v1/perfil/");
         filterRb.addUrlPatterns("/v1/perfil/all");
-        filterRb.addUrlPatterns("/v1/perfil/comentario/");
+        filterRb.addUrlPatterns("/v1/perfil/comentario");
         filterRb.addUrlPatterns("/v1/perfil/comentario/resposta");
         filterRb.addUrlPatterns("/v1/perfil/comentario/all");
-        filterRb.addUrlPatterns("/v1/perfil/comentario/delete");
+//        filterRb.addUrlPatterns("/v1/perfil/comentario/delete");
         filterRb.addUrlPatterns("/v1/perfil/like");
+        filterRb.addUrlPatterns("/v1/perfil/ranking/like");
+        filterRb.addUrlPatterns("/v1/perfil/ranking/comentario");
         return filterRb;
     }
 

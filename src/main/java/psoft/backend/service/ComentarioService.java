@@ -29,7 +29,9 @@ public class ComentarioService {
     public Comentario findById (long id){
         Comentario comentario = comentarioDAO.findById(id);
         if (comentario == null) {
-            throw new ComentarioNullException("Comentário não existe");
+            throw new ComentarioNullException("Comentário não existe!");
+        }if (comentario.isApagado()){
+            throw new ComentarioDeleteException("Comentário apagado!");
         }
         return comentario;
     }
