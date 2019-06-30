@@ -89,7 +89,7 @@ public class UserController {
             )
 
     })
-    @DeleteMapping(value = "/delete/all")
+    @DeleteMapping(value = "/all") // /delete/all
     public ResponseEntity deleteAll() {
         try {
             userService.deleteAll();

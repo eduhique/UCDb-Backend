@@ -72,13 +72,45 @@ public class Comentario {
 
     public List<Comentario> getRespostas() {
         List<Comentario> result = respostas;
-        if(apagado && !result.isEmpty()){
-            for (Comentario c : result) {
-                c.setText("");
+        return result;
+    }
+
+
+    public int getQtdResposta() {
+        int result = 0;
+        if (!getRespostas().isEmpty() && !isApagado()) {
+            result = qtdRecursivo(this);
+        }
+
+        return result;
+    }
+
+    private int qtdRecursivo(Comentario comentario) {
+        int result = 0;
+        if (!comentario.getRespostas().isEmpty()) {
+            for (Comentario c : comentario.getRespostas()) {
+                if (!c.isApagado())
+                    result += 1 + qtdRecursivo(c);
             }
         }
         return result;
     }
+
+    public void setApagado(boolean apagado) {
+        this.apagado = apagado;
+        if (!getRespostas().isEmpty()) {
+            apagaRecursivo(getRespostas());
+        }
+    }
+
+    private void apagaRecursivo(List<Comentario> respostas) {
+        if (!respostas.isEmpty()) {
+            for (Comentario r : respostas) {
+                r.setApagado(true);
+            }
+        }
+    }
+
 
 //    public Boolean getUserAtual() {
 //        return perfil.getUserAtual().getEmail().equals(user.getEmail());

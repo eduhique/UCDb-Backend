@@ -84,4 +84,24 @@ public class Perfil {
     public void addComentario(Comentario comentario) {
         comentarios.add(comentario);
     }
+
+    public int getQtdComentario(){
+        int result = 0;
+        if(!getComentarios().isEmpty()){
+            result = qtdRecursivo(this);
+        }
+        return result;
+    }
+
+    private int qtdRecursivo(Perfil perfil) {
+        int result = 0;
+        if(!perfil.getComentarios().isEmpty()){
+            for (Comentario c: perfil.getComentarios()) {
+                if(!c.isApagado()) {
+                    result += 1 + c.getQtdResposta();
+                }
+            }
+        }
+        return result;
+    }
 }
