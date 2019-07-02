@@ -10,8 +10,8 @@ import javax.persistence.*;
 import java.util.List;
 
 
-@ApiModel(value = "Comentário", description = "Modelo de um Comentário. Esse modelo representa a entidade disciplina" +
-        " no banco de dados e possui as funções básicas de getters e setters para seus atributos.")
+@ApiModel(value = "Comentário", description = "Modelo de um Comentário no banco de dados. Possui as funções básicas de" +
+        " getters e setters para seus atributos. E funcões personalizadas para retornar outras informações a partir dos atributos existentes.")
 @Entity
 @Data
 public class Comentario {
@@ -110,9 +110,4 @@ public class Comentario {
             }
         }
     }
-
-
-//    public Boolean getUserAtual() {
-//        return perfil.getUserAtual().getEmail().equals(user.getEmail());
-//    }
 }
