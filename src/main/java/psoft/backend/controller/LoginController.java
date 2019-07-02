@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import psoft.backend.exception.user.UserEmailInvalidoException;
 import psoft.backend.model.User;
+import psoft.backend.request.UserRequest;
 import psoft.backend.service.UserService;
 
 import javax.servlet.ServletException;
@@ -34,21 +35,21 @@ public class LoginController {
                     response=LoginResponse.class
             )
     })
-    public LoginResponse authenticate(@RequestBody User user) throws ServletException {
-        if (user == null) {
+    public LoginResponse authenticate(@RequestBody UserRequest userRequest) throws ServletException {
+        if (userRequest == null) {
             throw new ServletException("Usuario não encontrado!");
         }
 
-        if (!user.validarEmail()) throw new UserEmailInvalidoException("Insira um e-mail valido");
+        if (!userRequest.validarEmail()) throw new UserEmailInvalidoException("Insira um e-mail valido");
 
         // Recupera o usuario
-        User authUser = userService.findByEmail(user.getEmail().toLowerCase());
+        User authUser = userService.findByEmail(userRequest.getEmail().toLowerCase());
 
         if (authUser == null) {
             throw new ServletException("Usuario não encontrado!");
         }
 
-        if (!authUser.getSenha().equals(user.getSenha())) {
+        if (!authUser.getSenha().equals(userRequest.getSenha())) {
             throw new ServletException("Senha Inválida!");
         }
 
