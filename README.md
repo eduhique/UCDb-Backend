@@ -4,7 +4,7 @@ O UFCG Cursos database é uma aplicação para classificação e reviews de disc
 
 ## Introdução
 
-Este API faz parte da avaliação disciplina de Projeto de Software, que foi subdividade em frontend e backend.
+Este API faz parte da avaliação disciplina de Projeto de Software, que foi subdividida em frontend e backend.
 
 - [Aplicação Implanatada](http://ucdb-client.herokuapp.com)
 - [Video Apresentação]()
