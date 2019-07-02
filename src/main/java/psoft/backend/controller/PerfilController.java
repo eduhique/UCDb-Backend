@@ -2,29 +2,25 @@ package psoft.backend.controller;
 
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import psoft.backend.exception.comentario.ComentarioInvalidoException;
-import psoft.backend.exception.comentario.ComentarioNullException;
 import psoft.backend.model.Comentario;
 import psoft.backend.model.Comparators.ComparaComentario;
 import psoft.backend.model.Comparators.ComparaLike;
 import psoft.backend.model.Disciplina;
 import psoft.backend.model.Perfil;
 import psoft.backend.model.User;
+import psoft.backend.request.ComentarioRequest;
 import psoft.backend.service.ComentarioService;
 import psoft.backend.service.DisciplinaService;
 import psoft.backend.service.PerfilService;
 import psoft.backend.service.UserService;
 
 import javax.servlet.ServletException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -48,7 +44,7 @@ public class PerfilController {
 
     @ApiOperation(value = "Cria Disciplinas e Perfis", notes = "Essa Operação cria diciplinas e perfis a partir um" +
             " lista de diciplinas passada. Para criar uma disciplica é nescessário passar um apenas o parametro 'nome'" +
-            " do objeto", response = Perfil.class, hidden = true)
+            " do objeto", response = Perfil.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 201,
@@ -59,18 +55,18 @@ public class PerfilController {
                     code = 500,
                     message = "Caso tenhamos algum erro vamos retornar uma Exception"
             )
-
     })
     @PostMapping(value = "/disciplina") // /create/all
     @ResponseBody
-    public ResponseEntity<List<Perfil>> createAll(@RequestBody List<Disciplina> disciplina) {
+    public ResponseEntity<List<Perfil>> createAll(@ApiParam(value = "Lista de disciplinas contendo apenas o nome." +
+            " Para acesso a essa rota precisa estar autenticado.") @RequestBody List<Disciplina> disciplina) {
         List<Disciplina> disciplinas = disciplinaService.createAll(disciplina);
         List<Perfil> perfil = perfilService.createPerfilAll(disciplinas);
         return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Buscar uma Disciplina pelo Id", notes = "Essa Operação pesquisa uma disciplina através do seu" +
-            " identificador único(ID) e o retorna", response = Disciplina.class)
+    @ApiOperation(value = "Buscar uma Disciplina pelo Id", notes = "Essa Operação da acesso uma disciplina através" +
+            " do seu id. Para acesso a essa rota não precisa estar autenticado.", response = Disciplina.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
@@ -79,19 +75,19 @@ public class PerfilController {
             ),
             @ApiResponse(
                     code = 404,
-                    message = "Retorna uma mensagem de erro com a DisciplinaNotFoundException"
+                    message = "Retorna uma mensagem de erro com uma Exception"
             )
 
     })
     @GetMapping(value = "/disciplina/{id}") // /disciplina/{id}
     @ResponseBody
-    public ResponseEntity<Disciplina> buscaDisciplina(@PathVariable long id) {
+    public ResponseEntity<Disciplina> buscaDisciplina(@ApiParam(value = "Identificador numérico único de uma disciplina.") @PathVariable long id) {
         Disciplina dis = disciplinaService.findById(id);
         return new ResponseEntity<Disciplina>(dis, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Buscar uma Disciplina a partir de uma substring", notes = "Essa Operação pesquisa uma" +
-            " disciplina a partir de uma substring.", response = Disciplina.class)
+            " disciplina a partir de uma substring. Para acesso a essa rota não precisa estar autenticado.", response = Disciplina.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
@@ -100,18 +96,17 @@ public class PerfilController {
             ),
             @ApiResponse(
                     code = 404,
-                    message = "Retorna uma mensagem de erro com a DisciplinaNotFoundException"
+                    message = "Retorna uma mensagem de erro com uma Exception"
             )
-
     })
     @GetMapping(value = "/disciplina/search") // /disciplina/search
-    public ResponseEntity<List<Disciplina>> buscaPorSubString(@RequestParam(name = "substring") String substring) {
+    public ResponseEntity<List<Disciplina>> buscaPorSubString(@ApiParam("Nome ou parte do nome de uma disciplina.") @RequestParam(name = "substring") String substring) {
         List<Disciplina> searchForString = disciplinaService.searchForString(substring.toUpperCase());
         return new ResponseEntity<List<Disciplina>>(searchForString, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Listar todas as disciplinas.", notes = "Esssa operção lista todas as disciplinas cadastradas" +
-            " no banco de dados.", response = Disciplina.class, position = 6)
+            " no banco de dados. Para acesso a essa rota não precisa estar autenticado.", response = Disciplina.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
@@ -120,9 +115,8 @@ public class PerfilController {
             ),
             @ApiResponse(
                     code = 404,
-                    message = "Retorna uma mensagem de erro com a DisciplinaNotFoundException"
+                    message = "Retorna uma mensagem de erro com uma Exception"
             )
-
     })
     @GetMapping(value = "/disciplina/all")
     public ResponseEntity<List<Disciplina>> listaTudo() {
@@ -132,8 +126,9 @@ public class PerfilController {
 
     //perfil
 
-    @ApiOperation(value = "Buscar um Perfil por id da Disciplina", notes = "Essa Operação pesquisa um perfil pelo id da Disciplina e o retorna",
-            response = Perfil.class, position = 3)
+    @ApiOperation(value = "Buscar um Perfil a partir id da Disciplina", notes = "Essa Operação dá acesso a um perfil" +
+            " através do id da Disciplina. Para acesso a essa rota precisa estar autenticado.",
+            response = Perfil.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
@@ -144,18 +139,19 @@ public class PerfilController {
                     code = 404,
                     message = "Retorna uma mensagem de erro com a Exception"
             )
-
     })
     @GetMapping(value = "/disciplina/id")  // "/"
     @ResponseBody
-    public ResponseEntity<Perfil> buscaPerfilPorDisciplina(@RequestParam(name = "disciplina-id") long id, @RequestHeader("Authorization") String token) throws ServletException {
+    public ResponseEntity<Perfil> buscaPerfilPorDisciplina(@ApiParam(value = "Identificador numérico único de uma disciplina.") @RequestParam(name = "disciplina-id") long id,
+                                                           @ApiParam(hidden = true, value = "token do usuário. Não precisa se passado, pois será retirado do header") @RequestHeader("Authorization") String token) throws ServletException {
         User user = userService.findByEmail(userService.getLogin(token));
         Perfil perfil = perfilService.findByDisciplinaId(id, user);
         return new ResponseEntity<Perfil>(perfil, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Buscar um Perfil", notes = "Essa Operação pesquisa um perfil pelo id e o retorna",
-            response = Perfil.class, position = 3)
+    @ApiOperation(value = "Buscar um Perfil", notes = "Essa Operação dá acesso a um perfil pelo seu id. Para acesso a" +
+            " essa rota precisa estar autenticado. Para acesso a essa rota precisa estar autenticado.",
+            response = Perfil.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
@@ -164,19 +160,21 @@ public class PerfilController {
             ),
             @ApiResponse(
                     code = 404,
-                    message = "Retorna uma mensagem de erro com a Exception"
+                    message = "Retorna uma mensagem de erro com uma Exception"
             )
 
     })
     @GetMapping(value = "/")
     @ResponseBody
-    public ResponseEntity<Perfil> buscaPerfil(@RequestParam(name = "perfil-id") long id, @RequestHeader("Authorization") String token) throws ServletException {
+    public ResponseEntity<Perfil> buscaPerfil(@ApiParam(value = "Identificador numérico único de um perfil.") @RequestParam(name = "perfil-id") long id,
+                                              @ApiParam(hidden = true, value = "token do usuário. Não precisa se passado, pois será retirado do header") @RequestHeader("Authorization") String token) throws ServletException {
         User user = userService.findByEmail(userService.getLogin(token));
         Perfil perfil = perfilService.findById(id, user);
         return new ResponseEntity<Perfil>(perfil, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Listar todos os perfis", notes = "Essa Operação Lista todos os perfis cadastrados no banco" +
+    @ApiOperation(value = "Listar todos os perfis.", notes = "Essa Operação dá acesso a uma lista com todos os perfis" +
+            " cadastrados no banco de dados. Para acesso a essa rota precisa estar autenticado." +
             " de dados.", response = Perfil.class)
     @ApiResponses(value = {
             @ApiResponse(
@@ -186,19 +184,21 @@ public class PerfilController {
             ),
             @ApiResponse(
                     code = 404,
-                    message = "Retorna uma mensagem de erro com a PerfilNotFoundException"
+                    message = "Retorna uma mensagem de erro com uma Exception"
             )
 
     })
     @GetMapping(value = "/all")
-    public ResponseEntity<List<Perfil>> listaPerfilAll(@RequestHeader("Authorization") String token) throws ServletException {
+    public ResponseEntity<List<Perfil>> listaPerfilAll(@ApiParam(hidden = true, value = "token do usuário. Não precisa se passado, pois será retirado do header") @RequestHeader("Authorization") String token) throws ServletException {
         User user = userService.findByEmail(userService.getLogin(token));
         List<Perfil> perfil = perfilService.findAll(user);
         return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.OK);
     }
 
     // Comentario
-    @ApiOperation(value = "Criar um comentário", notes = "Essa Operação cria um comentario a partir do id do perfil.", response = Comentario.class, position = 4)
+
+    @ApiOperation(value = "Criar um comentário", notes = "Essa Operação cria um comentario que pode ser ou um" +
+            " comentário a um perfil ou uma resposta a um comentário. Para acesso a essa rota precisa estar autenticado", response = Comentario.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 201,
@@ -217,63 +217,19 @@ public class PerfilController {
     })
     @PostMapping(value = "/comentario") // /comentario/
     @ResponseBody
-    public ResponseEntity<Comentario> createComentario(@RequestParam(name = "perfil-id") long id, @RequestHeader("Authorization") String token, @RequestBody Comentario comentario) throws ServletException {
+    public ResponseEntity<Comentario> createComentario(@ApiParam(value = "Identificador numérico único de um perfil.") @RequestParam(name = "perfil-id") long perfilId,
+                                                       @ApiParam(value = "Idendificador numérico unico de um comentário.", defaultValue = "0")@RequestParam(name = "comentario-id", defaultValue = "0") long comentarioId,
+                                                       @ApiParam(value = "Modelo de uma request de um comentário. Este de JSON tem apenas 'text'.")@RequestBody ComentarioRequest comentario,
+                                                       @ApiParam(hidden = true, value = "token do usuário. Não precisa se passado, pois será retirado do header.") @RequestHeader("Authorization") String token) throws ServletException {
         User user = userService.findByEmail(userService.getLogin(token));
-        Perfil perfil = perfilService.findById(id, user);
-        if (comentario == null) {
-            throw new ComentarioNullException("Comentário não é valido");
-        }
-        if (comentario.getText() == null) throw new ComentarioNullException("O comentário não pode ser Null");
-        if (comentario.getText().trim().equals(""))
-            throw new ComentarioInvalidoException("O comentário não pode ser vazio, insira um comentário valido");
-        String hora = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("HH:mm"));
-        String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        Comentario preComentario = new Comentario(perfil, user, comentario.getText(), hora, data, new ArrayList<Comentario>());
-        perfil.addComentario(preComentario);
-        Comentario novoComentario = comentarioService.create(preComentario);
+        Perfil perfil = perfilService.findById(perfilId, user);
+        Comentario novoComentario = comentarioService.create(perfil, user, comentario.getText(), comentarioId);
         return new ResponseEntity<Comentario>(novoComentario, HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Criar Resposta para um Comentário", notes = "Essa Operação cria uma resposta para um" +
-            " comentário a parti do id do comentário a ser respondido", response = Comentario.class)
-    @ApiResponses(value = {
-            @ApiResponse(
-                    code = 201,
-                    message = "Retorna o comentário(resposta) criado.",
-                    response = Comentario.class
-            ),
-            @ApiResponse(
-                    code = 400,
-                    message = "Retorna uma mensagem de erro com uma Exception."
-            ),
-            @ApiResponse(
-                    code = 404,
-                    message = "Retorna uma mensagem de erro com uma Exception"
-            )
 
-    })
-    @PostMapping(value = "/comentario/resposta")
-    @ResponseBody
-    public ResponseEntity<Comentario> createResposta(@RequestParam(name = "comentario-id") long comentarioId, @RequestHeader("Authorization") String token, @RequestBody Comentario resposta) throws ServletException {
-        Comentario comentario = comentarioService.findById(comentarioId);
-        User user = userService.findByEmail(userService.getLogin(token));
-        if (resposta == null) {
-            throw new ComentarioNullException("Comentário não é valido");
-        }
-        if (resposta.getText() == null) throw new ComentarioNullException("O comentário não pode ser Null");
-        if (resposta.getText().trim().equals(""))
-            throw new ComentarioInvalidoException("O comentário não pode ser vazio, insira um comentário valido");
-
-        Perfil perfil = comentario.getPerfil();
-        String hora = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("HH:mm"));
-        String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        Comentario preComentario = new Comentario(perfil, user, resposta.getText(), hora, data, new ArrayList<Comentario>());
-        comentario.addResposta(preComentario);
-        Comentario novoComentario = comentarioService.create(preComentario);
-        return new ResponseEntity<Comentario>(novoComentario, HttpStatus.CREATED);
-    }
-
-    @ApiOperation(value = "Listar todos os comentários", notes = "Essa Operação lista todos os comentários", response = Comentario.class)
+    @ApiOperation(value = "Listar todos os comentários", notes = "Essa Operação dá acesso a uma lista com todos os" +
+            " comentários. Para acesso a essa rota precisa estar autenticado.", response = Comentario.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
@@ -282,7 +238,7 @@ public class PerfilController {
             ),
             @ApiResponse(
                     code = 404,
-                    message = "Retorna uma mensagem de erro com a PerfilNotFoundException"
+                    message = "Retorna uma mensagem de erro com a Exception"
             )
 
     })
@@ -292,7 +248,7 @@ public class PerfilController {
         return new ResponseEntity<List<Comentario>>(comentarios, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Deletar Um comentário", notes = "Essa Operação deleta um comentário ou resposta.", response = Comentario.class)
+    @ApiOperation(value = "Deletar um comentário", notes = "Essa Operação deleta um comentário. Para acesso a essa rota precisa estar autenticado.", response = Comentario.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
@@ -301,7 +257,7 @@ public class PerfilController {
             ),
             @ApiResponse(
                     code = 404,
-                    message = "Retorna uma mensagem de erro com a ComentarioNotFoundException"
+                    message = "Retorna uma mensagem de erro com a Exception"
             ),
             @ApiResponse(
                     code = 400,
@@ -314,12 +270,13 @@ public class PerfilController {
 
     })
     @DeleteMapping(value = "/comentario") // /comentario/delete
-    public ResponseEntity<Comentario> ComentarioDelete(@RequestParam(name = "comentario-id") long comentarioId, @RequestHeader("Authorization") String token) throws ServletException {
+    public ResponseEntity<Comentario> ComentarioDelete(@ApiParam(value = "Identificador numérico único de um comentário.")@RequestParam(name = "comentario-id") long comentarioId,
+                                                       @ApiParam(hidden = true, value = "token do usuário. Não precisa se passado, pois será retirado do header") @RequestHeader("Authorization") String token) throws ServletException {
         Comentario comentario = comentarioService.deleteUpdate(comentarioId, userService.getLogin(token));
         return new ResponseEntity<Comentario>(comentario, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Curtir um Perfil", notes = "Essa operação possibilita dar ou retirar like de um perfil.", response = Perfil.class)
+    @ApiOperation(value = "Curtir um Perfil", notes = "Essa operação possibilita dar ou retirar like de um perfil. Para acesso a essa rota precisa estar autenticado.", response = Perfil.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
@@ -336,7 +293,8 @@ public class PerfilController {
             )
     })
     @PutMapping(value = "/like")
-    public ResponseEntity<Perfil> curtirPerfil(@RequestParam(name = "perfil-id") long id, @RequestHeader("Authorization") String token) throws ServletException {
+    public ResponseEntity<Perfil> curtirPerfil(@ApiParam(value = "Identificador numérico único de um perfil.")@RequestParam(name = "perfil-id") long id,
+                                               @ApiParam(hidden = true, value = "token do usuário. Não precisa se passado, pois será retirado do header") @RequestHeader("Authorization") String token) throws ServletException {
         User user = userService.findByEmail(userService.getLogin(token));
         Perfil perfil = perfilService.curtirPerfil(id, user);
         return new ResponseEntity<Perfil>(perfil, HttpStatus.OK);
@@ -345,7 +303,7 @@ public class PerfilController {
     // ranking
 
     @ApiOperation(value = "Ranking das disciplinas(por número de likes) ", notes = "Essa operação possibilita visulizar" +
-            " o ranking das disciplinas de ordenados de acordo com a quantidade de likes.", response = Perfil.class)
+            " o ranking das disciplinas de ordenados de acordo com a quantidade de likes. Para acesso a essa rota precisa estar autenticado.", response = Perfil.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
@@ -362,7 +320,7 @@ public class PerfilController {
             )
     })
     @GetMapping(value = "/ranking/like")
-    public ResponseEntity<List<Perfil>> rankigLike(@RequestHeader("Authorization") String token) throws ServletException {
+    public ResponseEntity<List<Perfil>> rankigLike(@ApiParam(hidden = true, value = "token do usuário. Não precisa se passado, pois será retirado do header") @RequestHeader("Authorization") String token) throws ServletException {
         User user = userService.findByEmail(userService.getLogin(token));
         List<Perfil> perfil = perfilService.findAll(user);
         comparador = new ComparaLike();
@@ -372,7 +330,7 @@ public class PerfilController {
 
     @ApiOperation(value = "Ranking das disciplinas(por número de comentários) ", notes = "Essa operação possibilita visulizar" +
             " o ranking das disciplinas de ordenados de acordo com a quantidade geral(comentário + respostas a" +
-            " comentários) de cometários.", response = Perfil.class)
+            " comentários) de cometários. Para acesso a essa rota precisa estar autenticado.", response = Perfil.class)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
@@ -389,11 +347,89 @@ public class PerfilController {
             )
     })
     @GetMapping(value = "/ranking/comentario")
-    public ResponseEntity<List<Perfil>> rankigComentario(@RequestHeader("Authorization") String token) throws ServletException {
+    public ResponseEntity<List<Perfil>> rankigComentario(@ApiParam(hidden = true, value = "token do usuário. Não precisa se passado, pois será retirado do header") @RequestHeader("Authorization") String token) throws ServletException {
         User user = userService.findByEmail(userService.getLogin(token));
         List<Perfil> perfil = perfilService.findAll(user);
         comparador = new ComparaComentario();
         perfil.sort(comparador);
         return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.OK);
     }
+
+// lixo
+
+
+    //    @ApiOperation(value = "Criar um comentário", notes = "Essa Operação cria um comentario a partir do id do perfil.", response = Comentario.class, position = 4)
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    code = 201,
+//                    message = "Retorna o comentário criado.",
+//                    response = Comentario.class
+//            ),
+//            @ApiResponse(
+//                    code = 400,
+//                    message = "Retorna uma mensagem de erro com uma Exception."
+//            ),
+//            @ApiResponse(
+//                    code = 404,
+//                    message = "Retorna uma mensagem de erro com uma Exception"
+//            )
+//
+//    })
+//    @PostMapping(value = "/comentario") // /comentario/
+//    @ResponseBody
+//    public ResponseEntity<Comentario> createComentario(@RequestParam(name = "perfil-id") long id, @RequestHeader("Authorization") String token, @RequestBody Comentario comentario) throws ServletException {
+//        User user = userService.findByEmail(userService.getLogin(token));
+//        Perfil perfil = perfilService.findById(id, user);
+//        if (comentario == null) {
+//            throw new ComentarioNullException("Comentário não é valido");
+//        }
+//        if (comentario.getText() == null) throw new ComentarioNullException("O comentário não pode ser Null");
+//        if (comentario.getText().trim().equals(""))
+//            throw new ComentarioInvalidoException("O comentário não pode ser vazio, insira um comentário valido");
+//        String hora = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("HH:mm"));
+//        String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+//        Comentario preComentario = new Comentario(perfil, user, comentario.getText(), hora, data, new ArrayList<Comentario>());
+//        perfil.addComentario(preComentario);
+//        Comentario novoComentario = comentarioService.create(preComentario);
+//        return new ResponseEntity<Comentario>(novoComentario, HttpStatus.CREATED);
+//    }
+//
+//    @ApiOperation(value = "Criar Resposta para um Comentário", notes = "Essa Operação cria uma resposta para um" +
+//            " comentário a parti do id do comentário a ser respondido", response = Comentario.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    code = 201,
+//                    message = "Retorna o comentário(resposta) criado.",
+//                    response = Comentario.class
+//            ),
+//            @ApiResponse(
+//                    code = 400,
+//                    message = "Retorna uma mensagem de erro com uma Exception."
+//            ),
+//            @ApiResponse(
+//                    code = 404,
+//                    message = "Retorna uma mensagem de erro com uma Exception"
+//            )
+//
+//    })
+//    @PostMapping(value = "/comentario/resposta")
+//                    @ResponseBody
+//                    public ResponseEntity<Comentario> createResposta(@RequestParam(name = "comentario-id") long comentarioId, @RequestHeader("Authorization") String token, @RequestBody Comentario resposta) throws ServletException {
+//            Comentario comentario = comentarioService.findById(comentarioId);
+//            User user = userService.findByEmail(userService.getLogin(token));
+//            if (resposta == null) {
+//            throw new ComentarioNullException("Comentário não é valido");
+//            }
+//            if (resposta.getText() == null) throw new ComentarioNullException("O comentário não pode ser Null");
+//            if (resposta.getText().trim().equals(""))
+//            throw new ComentarioInvalidoException("O comentário não pode ser vazio, insira um comentário valido");
+//
+//            Perfil perfil = comentario.getPerfil();
+//            String hora = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("HH:mm"));
+//            String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+//            Comentario preComentario = new Comentario(perfil, user, resposta.getText(), hora, data, new ArrayList<Comentario>());
+//            comentario.addResposta(preComentario);
+//            Comentario novoComentario = comentarioService.create(preComentario);
+//            return new ResponseEntity<Comentario>(novoComentario, HttpStatus.CREATED);
+//            }
 }
