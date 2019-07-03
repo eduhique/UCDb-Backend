@@ -3,17 +3,14 @@ package psoft.backend.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 import psoft.backend.exception.user.UserExistsException;
 import psoft.backend.model.User;
 import psoft.backend.service.UserService;
 
 import javax.servlet.ServletException;
-import java.util.List;
 
 @RestController
 @RequestMapping({"/v1/users"})
