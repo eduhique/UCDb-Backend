@@ -21,6 +21,8 @@ import psoft.backend.service.PerfilService;
 import psoft.backend.service.UserService;
 
 import javax.servlet.ServletException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Comparator;
 import java.util.List;
 
@@ -100,8 +102,8 @@ public class PerfilController {
             )
     })
     @GetMapping(value = "/disciplina/search") // /disciplina/search
-    public ResponseEntity<List<Disciplina>> buscaPorSubString(@ApiParam("Nome ou parte do nome de uma disciplina.") @RequestParam(name = "substring") String substring) {
-        List<Disciplina> searchForString = disciplinaService.searchForString(substring.toUpperCase());
+    public ResponseEntity<List<Disciplina>> buscaPorSubString(@ApiParam("Nome ou parte do nome de uma disciplina.") @RequestParam(name = "substring") String substring) throws UnsupportedEncodingException {
+        List<Disciplina> searchForString = disciplinaService.searchForString(URLDecoder.decode(substring, "UTF-8").toUpperCase());
         return new ResponseEntity<List<Disciplina>>(searchForString, HttpStatus.OK);
     }
 
