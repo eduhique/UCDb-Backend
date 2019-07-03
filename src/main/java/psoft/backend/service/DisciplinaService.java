@@ -59,6 +59,4 @@ public class DisciplinaService {
         }
         return result;
     }
-
-
 }

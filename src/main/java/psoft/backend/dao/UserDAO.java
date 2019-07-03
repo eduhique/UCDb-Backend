@@ -18,4 +18,6 @@ public interface UserDAO extends JpaRepository<User, String> {
 
     List<User> findAll();
 
+    @Override
+    void deleteAll();
 }
