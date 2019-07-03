@@ -5,6 +5,7 @@ import psoft.backend.dao.DisciplinaDAO;
 import psoft.backend.exception.disciplina.DisciplinaNotFoundException;
 import psoft.backend.model.Disciplina;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,12 +46,13 @@ public class DisciplinaService {
     public List<Disciplina> searchForString(String substring) {
         List<Disciplina> search = disciplinaDAO.findAll();
         List<Disciplina> result = new ArrayList<Disciplina>();
+        String substringSemAcento = Normalizer.normalize(substring, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
         if (search.isEmpty()) {
             throw new InternalError("Não há disciplinas cadastradas!");
         }
         for (Disciplina d : search) {
-            String name = d.getNome();
-            if (name.contains(substring)) {
+            String name = Normalizer.normalize(d.getNome(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+            if (name.contains(substringSemAcento)) {
                 result.add(d);
             }
         }

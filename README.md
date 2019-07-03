@@ -30,6 +30,10 @@ O usuário pode dar like a uma disciplina, assim como pode retirar este like da 
 ### Ranking das disciplinas:
 É possível ver o ranking de disciplinas a partir do número de likes ou também pelo número de comentários.
 
+## Validade do Token
+
+Atualmente, a validade do token tem duração de 3 horas. Este intervalo foi escolhido por questões de segurança e para um uso confortável do usuário. Após a expiração do mesmo, o usuário precisará se autenticar novamente.
+
 ## Grupo
 
 - Eduardo Henrique Pontes Silva 
