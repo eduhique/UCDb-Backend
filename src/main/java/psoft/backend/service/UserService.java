@@ -15,6 +15,7 @@ public class UserService {
     private final UserDAO userDAO;
     private TokenFilter tokenFilter;
 
+
     UserService(UserDAO userDAO) {
         this.userDAO = userDAO;
         this.tokenFilter = new TokenFilter();
@@ -23,15 +24,14 @@ public class UserService {
     public User create(User user) throws UserExistsException {
         if (!user.validarEmail()) throw new UserEmailInvalidoException("Insira um e-mail válido");
         user.setEmail(user.getEmail().toLowerCase());
-        User userVerify = userDAO.findByEmail(user.getEmail());
         if (user.getPrimeiroNome() == null) throw new UserNullException("O primeiro nome não pode ser Null");
         if (user.getPrimeiroNome().trim().equals("")) throw new UserInvalidoException("O primeiro nome não pode ser vazio, insira um nome valido");
         if(user.getSenha().length() < 8 || user.getSenha().length() > 20) throw new UserInvalidoException("Deve inserir uma senha válida. Uma senha válida possui ente 8 e 15 caracteres");
 
+        User userVerify = userDAO.findByEmail(user.getEmail());
         if (!(userVerify == null)) {
             throw new UserExistsException("Email já Cadastrado");
         }
-
         return userDAO.save(user);
     }
 

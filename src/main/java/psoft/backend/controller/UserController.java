@@ -11,13 +11,13 @@ import psoft.backend.model.User;
 import psoft.backend.service.UserService;
 
 import javax.servlet.ServletException;
-import java.util.List;
 
 @RestController
 @RequestMapping({"/v1/users"})
 public class UserController {
 
     private UserService userService;
+
 
     UserController(UserService userService) {
         this.userService = userService;
