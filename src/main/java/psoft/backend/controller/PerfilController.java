@@ -44,7 +44,7 @@ public class PerfilController {
 
     @ApiOperation(value = "Cria Disciplinas e Perfis", notes = "Essa Operação cria diciplinas e perfis a partir um" +
             " lista de diciplinas passada. Para criar uma disciplica é nescessário passar um apenas o parametro 'nome'" +
-            " do objeto", response = Perfil.class)
+            " do objeto", response = Perfil.class, hidden = true)
     @ApiResponses(value = {
             @ApiResponse(
                     code = 201,
@@ -354,82 +354,4 @@ public class PerfilController {
         perfil.sort(comparador);
         return new ResponseEntity<List<Perfil>>(perfil, HttpStatus.OK);
     }
-
-// lixo
-
-
-    //    @ApiOperation(value = "Criar um comentário", notes = "Essa Operação cria um comentario a partir do id do perfil.", response = Comentario.class, position = 4)
-//    @ApiResponses(value = {
-//            @ApiResponse(
-//                    code = 201,
-//                    message = "Retorna o comentário criado.",
-//                    response = Comentario.class
-//            ),
-//            @ApiResponse(
-//                    code = 400,
-//                    message = "Retorna uma mensagem de erro com uma Exception."
-//            ),
-//            @ApiResponse(
-//                    code = 404,
-//                    message = "Retorna uma mensagem de erro com uma Exception"
-//            )
-//
-//    })
-//    @PostMapping(value = "/comentario") // /comentario/
-//    @ResponseBody
-//    public ResponseEntity<Comentario> createComentario(@RequestParam(name = "perfil-id") long id, @RequestHeader("Authorization") String token, @RequestBody Comentario comentario) throws ServletException {
-//        User user = userService.findByEmail(userService.getLogin(token));
-//        Perfil perfil = perfilService.findById(id, user);
-//        if (comentario == null) {
-//            throw new ComentarioNullException("Comentário não é valido");
-//        }
-//        if (comentario.getText() == null) throw new ComentarioNullException("O comentário não pode ser Null");
-//        if (comentario.getText().trim().equals(""))
-//            throw new ComentarioInvalidoException("O comentário não pode ser vazio, insira um comentário valido");
-//        String hora = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("HH:mm"));
-//        String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-//        Comentario preComentario = new Comentario(perfil, user, comentario.getText(), hora, data, new ArrayList<Comentario>());
-//        perfil.addComentario(preComentario);
-//        Comentario novoComentario = comentarioService.create(preComentario);
-//        return new ResponseEntity<Comentario>(novoComentario, HttpStatus.CREATED);
-//    }
-//
-//    @ApiOperation(value = "Criar Resposta para um Comentário", notes = "Essa Operação cria uma resposta para um" +
-//            " comentário a parti do id do comentário a ser respondido", response = Comentario.class)
-//    @ApiResponses(value = {
-//            @ApiResponse(
-//                    code = 201,
-//                    message = "Retorna o comentário(resposta) criado.",
-//                    response = Comentario.class
-//            ),
-//            @ApiResponse(
-//                    code = 400,
-//                    message = "Retorna uma mensagem de erro com uma Exception."
-//            ),
-//            @ApiResponse(
-//                    code = 404,
-//                    message = "Retorna uma mensagem de erro com uma Exception"
-//            )
-//
-//    })
-//    @PostMapping(value = "/comentario/resposta")
-//                    @ResponseBody
-//                    public ResponseEntity<Comentario> createResposta(@RequestParam(name = "comentario-id") long comentarioId, @RequestHeader("Authorization") String token, @RequestBody Comentario resposta) throws ServletException {
-//            Comentario comentario = comentarioService.findById(comentarioId);
-//            User user = userService.findByEmail(userService.getLogin(token));
-//            if (resposta == null) {
-//            throw new ComentarioNullException("Comentário não é valido");
-//            }
-//            if (resposta.getText() == null) throw new ComentarioNullException("O comentário não pode ser Null");
-//            if (resposta.getText().trim().equals(""))
-//            throw new ComentarioInvalidoException("O comentário não pode ser vazio, insira um comentário valido");
-//
-//            Perfil perfil = comentario.getPerfil();
-//            String hora = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("HH:mm"));
-//            String data = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-//            Comentario preComentario = new Comentario(perfil, user, resposta.getText(), hora, data, new ArrayList<Comentario>());
-//            comentario.addResposta(preComentario);
-//            Comentario novoComentario = comentarioService.create(preComentario);
-//            return new ResponseEntity<Comentario>(novoComentario, HttpStatus.CREATED);
-//            }
 }
