@@ -13,7 +13,7 @@ Este API faz parte da avaliação disciplina de Projeto de Software, que foi sub
 ## Funcionalidades:
 
 ### Cadastrar/autenticar usuários:
-É possível o usuário se cadastar e se logar dentro do sistema para ter acesso às demais funcionalidades.
+É possível o usuário se cadastar e se logar dentro do sistema para ter acesso às demais funcionalidades. Ao se cadastrar o usuário recebe um e-mail de boas vindas.
 
 ### Pesquisar disciplinas a partir de uma (sub)string:
 O usuário pode pesquisar por uma disciplina por um pedacinho do seu nome, ou então, pelo nome completo.
