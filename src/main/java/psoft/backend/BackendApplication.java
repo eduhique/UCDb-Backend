@@ -4,12 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import psoft.backend.model.TokenFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import psoft.backend.model.TokenFilter;
 
 @SpringBootApplication
 public class BackendApplication {
@@ -30,7 +28,6 @@ public class BackendApplication {
         FilterRegistrationBean filterRb = new FilterRegistrationBean();
         filterRb.setFilter(new TokenFilter());
         filterRb.addUrlPatterns("/v1/users/all");
-//        filterRb.addUrlPatterns("/v1/users/delete/all");
         filterRb.addUrlPatterns("/v1/users/getuser");
         filterRb.addUrlPatterns("/v1/perfil/disciplina");
         filterRb.addUrlPatterns("/v1/perfil/disciplina/id");
@@ -39,7 +36,6 @@ public class BackendApplication {
         filterRb.addUrlPatterns("/v1/perfil/comentario");
         filterRb.addUrlPatterns("/v1/perfil/comentario/resposta");
         filterRb.addUrlPatterns("/v1/perfil/comentario/all");
-//        filterRb.addUrlPatterns("/v1/perfil/comentario/delete");
         filterRb.addUrlPatterns("/v1/perfil/like");
         filterRb.addUrlPatterns("/v1/perfil/ranking/like");
         filterRb.addUrlPatterns("/v1/perfil/ranking/comentario");

@@ -16,8 +16,8 @@ import javax.servlet.ServletException;
 @RequestMapping({"/v1/users"})
 public class UserController {
 
-    private UserService userService;
 
+    private UserService userService;
 
     UserController(UserService userService) {
         this.userService = userService;
