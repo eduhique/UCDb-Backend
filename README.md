@@ -7,9 +7,8 @@ O UFCG Cursos database é uma aplicação para classificação e reviews de disc
 Este API faz parte da avaliação disciplina de Projeto de Software, que foi subdividida em frontend e backend.
 
 - [Documentação Swagger](https://api-ucdb.herokuapp.com/api/swagger-ui.html)
-- [Aplicação Implanatada](http://ucdb-client.herokuapp.com)
-- [Video Apresentação](https://youtu.be/n2RxgYG20Qw) (aplicação implantada no heroku e ao abrir, após um longo periodo sem uso, leva cerca de 40 segundos para a dependecia ser levantada)
-
+- [Aplicação Implanatada](http://ucdb-client.herokuapp.com) (aplicação implantada no heroku e ao abrir, após um longo periodo sem uso, leva cerca de 40 segundos para a dependecia ser levantada)
+- [Video Apresentação](https://youtu.be/n2RxgYG20Qw)
 ## Funcionalidades:
 
 ### Cadastrar/autenticar usuários:
