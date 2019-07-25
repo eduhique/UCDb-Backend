@@ -38,10 +38,11 @@ public class UserService {
         if (!(userVerify == null)) {
             throw new UserExistsException("Email já Cadastrado");
         }
-        try{
-        enviaEmail(user);
-        }catch (Exception ignored){
-        }
+        
+        //try{
+        //enviaEmail(user);
+        //}catch (Exception ignored){
+        //}
 
         return userDAO.save(user);
     }
@@ -70,6 +71,8 @@ public class UserService {
         return tokenFilter.getLogin(auth);
     }
 
+    // função criada com a finalidade de apresentar uma função adicional do backend. 
+    //após a apresentação o mesmo o email foi excluido
     private void enviaEmail(User user){
         Properties props = new Properties();
 
