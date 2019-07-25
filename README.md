@@ -8,7 +8,7 @@ Este API faz parte da avaliação disciplina de Projeto de Software, que foi sub
 
 - [Documentação Swagger](https://api-ucdb.herokuapp.com/api/swagger-ui.html)
 - [Aplicação Implanatada](http://ucdb-client.herokuapp.com)
-- [Video Apresentação](https://youtu.be/n2RxgYG20Qw)
+- [Video Apresentação](https://youtu.be/n2RxgYG20Qw) (aplicação implantada no heroku e ao abrir, após um longo periodo sem uso, leva cerca de 40 segundos para a dependecia ser levantada)
 
 ## Funcionalidades:
 
